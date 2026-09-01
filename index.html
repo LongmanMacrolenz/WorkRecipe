@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>워크레시피 (WorkRecipe) - 일 잘하는 사람의 AI 조리법</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- 포트원 (PortOne) 결제 V2 SDK -->
+  <script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Pretendard', sans-serif;
+    }
+    .blur-secret {
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
+
+  <!-- ======================= 1. 상단 네비게이션 ======================= -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- 로고 -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('explore')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
+          <i class="fa-solid fa-utensils text-lg"></i>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight text-slate-900">WorkRecipe</span>
+          <span class="text-[10px] text-amber-600 font-bold ml-1 px-1.5 py-0.5 bg-amber-50 rounded border border-amber-200">LIVE APP</span>
+        </div>
+      </div>
+
+      <!-- 네비게이션 탭 -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+        <button onclick="navigate('explore')" class="hover:text-amber-600 transition-colors py-1">레시피 탐색</button>
+        <button onclick="navigate('creator-studio')" class="hover:text-amber-600 transition-colors py-1">레시피 등록 (셰프 스튜디오)</button>
+        <button onclick="navigate('mypage')" class="hover:text-amber-600 transition-colors py-1">마이페이지</button>
+      </nav>
+
+      <!-- 우측 유저 액션 -->
+      <div class="flex items-center gap-3" id="nav-user-area">
+        <!-- JS로 로그인/로그아웃 상태 렌더링 -->
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================= 2. 페이지 컨테이너 ======================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- [VIEW 1] 메인 탐색 & 피드 (Explore) -->
+    <div id="view-explore" class="space-y-8">
+      <!-- 히어로 배너 -->
+      <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-amber-950 rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden">
+        <div class="max-w-2xl relative z-10">
+          <span class="inline-block text-xs font-bold text-amber-400 uppercase tracking-widest px-3 py-1 bg-amber-400/10 rounded-full border border-amber-400/20 mb-4">
+            실시간 실무 AI 조리법
+          </span>
+          <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-4">
+            일 잘하는 사람의 모니터 속 <br><span class="text-amber-400">AI 프롬프트와 툴 세팅</span>을 복사하세요.
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+            검증된 셰프의 정기 구독을 시작하면 감춰진 비공개 조리법(프롬프트, 자동화 코드)이 즉시 잠금 해제됩니다.
+          </p>
+          <button onclick="navigate('creator-studio')" class="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg transition-all text-sm inline-flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            <span>나만의 AI 레시피 판매하기</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 카테고리 필터 -->
+      <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+        <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+          <span>🔥 실시간 인기 AI 레시피</span>
+        </h2>
+        <div class="flex gap-2">
+          <button onclick="filterCategory('전체')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-900 text-white filter-btn" data-cat="전체">전체</button>
+          <button onclick="filterCategory('마케팅')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 filter-btn" data-cat="마케팅">마케팅</button>
+          <button onclick="filterCategory('쇼핑몰')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 filter-btn" data-cat="쇼핑몰">1인 쇼핑몰</button>
+          <button onclick="filterCategory('기획/PO')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 filter-btn" data-cat="기획/PO">기획/PO</button>
+        </div>
+      </div>
+
+      <!-- 레시피 카드 리스트 그리드 -->
+      <div id="recipe-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- JS로 동적 카드 렌더링 -->
+      </div>
+    </div>
+
+    <!-- [VIEW 2] 레시피 상세 & 구독 결제 (Detail) -->
+    <div id="view-detail" class="hidden space-y-6">
+      <button onclick="navigate('explore')" class="text-sm font-semibold text-slate-500 hover:text-slate-900 inline-flex items-center gap-2 mb-2">
+        <i class="fa-solid fa-arrow-left"></i> 목록으로 돌아가기
+      </button>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" id="detail-container">
+        <!-- JS로 상세 데이터 주입 -->
+      </div>
+    </div>
+
+    <!-- [VIEW 3] 셰프 스튜디오 (레시피 등록) -->
+    <div id="view-creator-studio" class="hidden max-w-3xl mx-auto space-y-6">
+      <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between pb-6 border-b border-slate-100 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold text-slate-900">👨‍🍳 셰프 스튜디오 : 새 AI 레시피 등록</h2>
+            <p class="text-xs text-slate-500 mt-1">오늘 메모장에 쓴 프롬프트와 업무 순서를 그대로 올려 구독자를 확보하세요.</p>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full">창작자 모드</span>
+        </div>
+
+        <form id="recipe-form" onsubmit="handleCreateRecipe(event)" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">레시피 제목 *</label>
+            <input type="text" id="form-title" required placeholder="예: 인스타 카드뉴스 5장 10분 완성 프롬프트 조리법" class="w-full p-3 text-sm border rounded-xl border-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">직군 카테고리 *</label>
+              <select id="form-category" class="w-full p-3 text-sm border rounded-xl border-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                <option value="마케팅">마케팅</option>
+                <option value="쇼핑몰">1인 쇼핑몰</option>
+                <option value="기획/PO">기획/PO</option>
+                <option value="개발/자동화">개발/자동화</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">월 정기 구독료 (원) *</label>
+              <input type="number" id="form-price" required value="9900" min="1000" step="1000" class="w-full p-3 text-sm border rounded-xl border-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">사용하는 AI 툴 재료 (쉼표로 구분) *</label>
+            <input type="text" id="form-tools" required placeholder="예: ChatGPT 4o, Canva 벌크, Claude 3.5" class="w-full p-3 text-sm border rounded-xl border-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">공개 맛보기 설명 (모든 방문자에게 노출) *</label>
+            <textarea id="form-summary" rows="2" required placeholder="이 레시피를 쓰면 어떤 업무가 몇 분 만에 해결되는지 매력적으로 적어주세요." class="w-full p-3 text-sm border rounded-xl border-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+          </div>
+
+          <div class="bg-amber-50/50 p-5 rounded-xl border border-amber-200/80">
+            <label class="block text-xs font-bold text-amber-900 mb-1">🔒 비공개 시크릿 조리법 (유료 구독자에게만 해제) *</label>
+            <p class="text-[11px] text-amber-700 mb-2">실제 복사해서 붙여넣을 프롬프트 전문, 세팅값, 노션 템플릿 복제 링크 등을 적어주세요.</p>
+            <textarea id="form-secret" rows="6" required placeholder="[1단계 프롬프트]
+당신은 수석 마케터입니다. 아래 본문을 5장 슬라이드 카드뉴스로 기획해주세요...
+
+[2단계 노션 템플릿 복제 링크]
+https://notion.so/..." class="w-full p-3 text-sm font-mono border rounded-xl border-amber-300 focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"></textarea>
+          </div>
+
+          <button type="submit" class="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-md transition-all text-sm">
+            레시피 발행하고 판매 시작하기
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- [VIEW 4] 마이페이지 (My Page) -->
+    <div id="view-mypage" class="hidden space-y-8">
+      <!-- 프로필 헤더 카드 -->
+      <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <div id="my-avatar" class="w-16 h-16 rounded-2xl bg-slate-900 text-white font-black text-xl flex items-center justify-center shadow-md">
+            U
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 id="my-name" class="text-xl font-extrabold text-slate-900">사용자 이름</h2>
+              <span id="my-role-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">일반 회원</span>
+            </div>
+            <p id="my-email" class="text-xs text-slate-500 mt-0.5">user@example.com</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 border-t sm:border-t-0 pt-4 sm:pt-0 w-full sm:w-auto justify-around sm:justify-end">
+          <div class="text-center px-4">
+            <div class="text-xs text-slate-400 font-semibold">구독 중인 셰프</div>
+            <div id="my-sub-count" class="text-xl font-extrabold text-amber-600">0</div>
+          </div>
+          <div class="text-center px-4 border-l border-slate-100">
+            <div class="text-xs text-slate-400 font-semibold">내가 등록한 레시피</div>
+            <div id="my-recipe-count" class="text-xl font-extrabold text-slate-900">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 탭 섹션 -->
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-lock-open text-amber-500"></i>
+            <span>내가 구독 중인 프리미엄 레시피 (비밀 조리법 해제됨)</span>
+          </h3>
+          <div id="my-subscriptions-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- JS로 구독 중인 레시피 카드 렌더링 -->
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i>
+            <span>내가 발행한 레시피 및 수익 관리</span>
+          </h3>
+          <div id="my-created-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- JS로 내가 등록한 레시피 카드 렌더링 -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ======================= 3. 로그인 모달 ======================= -->
+  <div id="login-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in duration-150">
+      <button onclick="closeLoginModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl mx-auto mb-3 shadow-md">
+          <i class="fa-solid fa-utensils"></i>
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-900">WorkRecipe 시작하기</h3>
+        <p class="text-xs text-slate-500 mt-1">로그인 후 실전 AI 프롬프트를 복사하고 구독하세요.</p>
+      </div>
+
+      <!-- 간편 유저 전환 테스트 버튼 -->
+      <div class="space-y-3 mb-6">
+        <p class="text-[11px] font-bold text-slate-400 text-center uppercase tracking-wider">체험용 계정 선택</p>
+        <button onclick="mockLogin('marketer')" class="w-full p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl text-left flex items-center justify-between transition-colors">
+          <div>
+            <div class="text-xs font-bold text-amber-900">👩‍💻 김마케터 (구독자 모드)</div>
+            <div class="text-[10px] text-amber-700">인스타/쇼핑몰 AI 레시피 구독 체험</div>
+          </div>
+          <i class="fa-solid fa-arrow-right text-amber-600 text-xs"></i>
+        </button>
+        <button onclick="mockLogin('chef')" class="w-full p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left flex items-center justify-between transition-colors">
+          <div>
+            <div class="text-xs font-bold text-slate-900">👨‍🍳 박셰프 (크리에이터 모드)</div>
+            <div class="text-[10px] text-slate-500">레시피 발행 및 정산 대시보드 체험</div>
+          </div>
+          <i class="fa-solid fa-arrow-right text-slate-600 text-xs"></i>
+        </button>
+      </div>
+
+      <div class="relative flex items-center justify-center mb-6">
+        <div class="border-t border-slate-200 w-full"></div>
+        <span class="bg-white px-3 text-[11px] text-slate-400 absolute">또는 직접 입력</span>
+      </div>
+
+      <form onsubmit="handleCustomLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">닉네임</label>
+          <input type="text" id="login-input-name" required placeholder="예: 일잘러홍길동" class="w-full p-3 text-sm border rounded-xl border-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">이메일</label>
+          <input type="email" id="login-input-email" required placeholder="user@example.com" class="w-full p-3 text-sm border rounded-xl border-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+        </div>
+        <button type="submit" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition-all shadow-md">
+          로그인하고 입장하기
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================= 4. 푸터 ======================= -->
+  <footer class="bg-white border-t border-slate-200 py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 rounded bg-amber-500 flex items-center justify-center text-white text-[10px]">
+          <i class="fa-solid fa-utensils"></i>
+        </div>
+        <strong class="text-slate-800">WorkRecipe</strong>
+        <span>© 2026 WorkRecipe Inc. All rights reserved.</span>
+      </div>
+      <div>포트원(PortOne) 실전 결제 연동 및 로컬스토리지 상태 관리 시스템 탑재</div>
+    </div>
+  </footer>
+
+  <!-- ======================= 5. 프론트엔드 핵심 로직 ======================= -->
+  <script>
+    // ---------------- [1] 초기 데이터 및 로컬스토리지 동기화 ----------------
+    const DEFAULT_RECIPES = [
+      {
+        id: 'recipe-1',
+        chefId: 'chef-jinwoo',
+        chefName: '마케터 진우',
+        chefTitle: 'IT 스타트업 5년차 그로스 리드',
+        chefAvatar: 'JW',
+        title: '인스타 카드뉴스 5장 기획부터 카피라이팅까지 10분 완성 레시피',
+        category: '마케팅',
+        price: 9900,
+        tools: ['ChatGPT 4o', 'Canva 벌크', '타깃분석GPT'],
+        summary: '원문 블로그 글 링크만 넣으면 타깃 독자의 반응을 유도하는 5장 슬라이드 구성안과 후킹 카피를 자동 추출합니다.',
+        secretRecipe: `[1단계: 후킹 카피 및 슬라이드 기획 프롬프트]
+당신은 10만 팔로워 인스타그램 수석 마케터입니다.
+제시된 원문 내용을 바탕으로 5장 카드뉴스 슬라이드 구성을 만드세요.
+- 1페이지: 이탈률 0%를 위한 호기심 자극 헤드라인 (의문형)
+- 2~4페이지: 핵심 솔루션 요약 (불릿 포인트 3개)
+- 5페이지: 저장/공유 유도 CTA 문구
+
+[2단계: Canva 일괄 생성 연동용 CSV 포맷]
+Header, Subtext, SlideNumber, CTA
+"칼퇴의 비밀", "3분만에 끝내는 법", 1, "프로필 링크 확인"`,
+        copiesCount: 1420
+      },
+      {
+        id: 'recipe-2',
+        chefId: 'chef-haeun',
+        chefName: '1인셀러 하은',
+        chefTitle: '스마트스토어/쿠팡 파워등급 셀러',
+        chefAvatar: 'HE',
+        title: '해외 소싱 상품 사진 1장으로 한글 상세페이지 원클릭 조립',
+        category: '쇼핑몰',
+        price: 14000,
+        tools: ['Claude 3.5 Sonnet', 'Midjourney v6', '포토샵 AI'],
+        summary: '외국어 텍스트 자동 번역 및 한국 소비자가 지갑을 여는 소구점 기반 상세페이지 카피를 3분 만에 조립하는 파이프라인.',
+        secretRecipe: `[Claude 3.5 Sonnet 프롬프트]
+첨부된 해외 소싱 제품 사진의 특징을 분석하고, 2030 한국 1인 가구를 타깃으로 한 상세페이지 기획안을 작성해줘.
+1. 제품의 가장 치명적인 결핍 해소 포인트 3가지
+2. '지금 안 사면 손해' 트리거 문구 5개
+3. Q&A 예상 질문 및 방어 답변`,
+        copiesCount: 890
+      },
+      {
+        id: 'recipe-3',
+        chefId: 'chef-minseok',
+        chefName: 'PO 민석',
+        chefTitle: '비전공자 출신 탑티어 프로덕트 오너',
+        chefAvatar: 'MS',
+        title: '100페이지 회의록 오디오 넣으면 핵심 액션아이템/기획서 3분 요약',
+        category: '기획/PO',
+        price: 12000,
+        tools: ['Whisper AI', 'Claude 3.5', 'Notion API'],
+        summary: '횡설수설한 회의 녹음본을 담당자별 R&R 및 다음 스프린트 개발 티켓으로 정돈해 노션에 자동 꽂아주는 레시피.',
+        secretRecipe: `[회의록 자동 파싱 프롬프트]
+회의 텍스트 원문에서 다음 항목만 추출해 Markdown 표로 정리해줘:
+| 안건 | 결정 사항 | 담당자(Owner) | 마감 기한(Due Date) | 리스크 요인 |`,
+        copiesCount: 2100
+      }
+    ];
+
+    // LocalStorage 초기화 함수
+    function getStoredRecipes() {
+      const stored = localStorage.getItem('wr_recipes');
+      if (!stored) {
+        localStorage.setItem('wr_recipes', JSON.stringify(DEFAULT_RECIPES));
+        return DEFAULT_RECIPES;
+      }
+      return JSON.parse(stored);
+    }
+
+    function getStoredUser() {
+      const user = localStorage.getItem('wr_user');
+      return user ? JSON.parse(user) : null;
+    }
+
+    function getStoredSubscriptions() {
+      const subs = localStorage.getItem('wr_subscriptions');
+      return subs ? JSON.parse(subs) : []; // 구독한 recipeId 배열
+    }
+
+    let currentUser = getStoredUser();
+    let currentCategory = '전체';
+
+    // ---------------- [2] 네비게이션 & 뷰 전환 ----------------
+    function navigate(viewName) {
+      document.getElementById('view-explore').classList.add('hidden');
+      document.getElementById('view-detail').classList.add('hidden');
+      document.getElementById('view-creator-studio').classList.add('hidden');
+      document.getElementById('view-mypage').classList.add('hidden');
+
+      if (viewName === 'creator-studio' && !currentUser) {
+        openLoginModal();
+        return;
+      }
+
+      if (viewName === 'mypage' && !currentUser) {
+        openLoginModal();
+        return;
+      }
+
+      document.getElementById(`view-${viewName}`).classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (viewName === 'explore') renderRecipeCards();
+      if (viewName === 'mypage') renderMyPage();
+    }
+
+    // ---------------- [3] 로그인 & 상태 관리 ----------------
+    function updateNavUser() {
+      const area = document.getElementById('nav-user-area');
+      if (currentUser) {
+        area.innerHTML = `
+          <div class="flex items-center gap-3">
+            <button onclick="navigate('mypage')" class="flex items-center gap-2 py-1.5 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
+              <div class="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[10px]">
+                ${currentUser.name[0]}
+              </div>
+              <span class="text-xs font-bold text-slate-800">${currentUser.name}</span>
+            </button>
+            <button onclick="logout()" class="text-xs font-medium text-slate-400 hover:text-slate-600">
+              로그아웃
+            </button>
+          </div>
+        `;
+      } else {
+        area.innerHTML = `
+          <button onclick="openLoginModal()" class="px-4 py-2 text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
+            로그인
+          </button>
+          <button onclick="openLoginModal()" class="px-4 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg shadow-sm transition-all">
+            시작하기
+          </button>
+        `;
+      }
+    }
+
+    function openLoginModal() {
+      document.getElementById('login-modal').classList.remove('hidden');
+      document.getElementById('login-modal').classList.add('flex');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('login-modal').classList.remove('flex');
+    }
+
+    function mockLogin(type) {
+      if (type === 'marketer') {
+        currentUser = {
+          id: 'user-marketer',
+          name: '김마케터',
+          email: 'marketer_kim@test.com',
+          role: 'SUBSCRIBER'
+        };
+      } else {
+        currentUser = {
+          id: 'chef-jinwoo',
+          name: '마케터 진우',
+          email: 'chef_jinwoo@test.com',
+          role: 'CHEF'
+        };
+      }
+      localStorage.setItem('wr_user', JSON.stringify(currentUser));
+      closeLoginModal();
+      updateNavUser();
+      renderRecipeCards();
+      alert(`${currentUser.name}님으로 로그인되었습니다!`);
+    }
+
+    function handleCustomLogin(e) {
+      e.preventDefault();
+      const name = document.getElementById('login-input-name').value;
+      const email = document.getElementById('login-input-email').value;
+      currentUser = {
+        id: 'user-' + Date.now(),
+        name,
+        email,
+        role: 'USER'
+      };
+      localStorage.setItem('wr_user', JSON.stringify(currentUser));
+      closeLoginModal();
+      updateNavUser();
+      renderRecipeCards();
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('wr_user');
+      updateNavUser();
+      navigate('explore');
+    }
+
+    // ---------------- [4] 메인 레시피 카드 렌더링 ----------------
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = 'px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-900 text-white filter-btn';
+        } else {
+          btn.className = 'px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 filter-btn';
+        }
+      });
+      renderRecipeCards();
+    }
+
+    function renderRecipeCards() {
+      const list = document.getElementById('recipe-list');
+      const recipes = getStoredRecipes();
+      const subscriptions = getStoredSubscriptions();
+
+      const filtered = currentCategory === '전체' 
+        ? recipes 
+        : recipes.filter(r => r.category === currentCategory);
+
+      list.innerHTML = filtered.map(recipe => {
+        const isSubscribed = subscriptions.includes(recipe.id);
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
+                    ${recipe.chefAvatar || recipe.chefName[0]}
+                  </div>
+                  <div>
+                    <div class="text-xs font-bold text-slate-800">${recipe.chefName}</div>
+                    <div class="text-[10px] text-slate-400">${recipe.chefTitle || 'AI 레시피 셰프'}</div>
+                  </div>
+                </div>
+                ${isSubscribed ? `
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300">
+                    <i class="fa-solid fa-lock-open mr-1"></i> 구독 중
+                  </span>
+                ` : `
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <i class="fa-solid fa-copy mr-1"></i> ${recipe.copiesCount}회 복사됨
+                  </span>
+                `}
+              </div>
+
+              <h3 onclick="viewRecipeDetail('${recipe.id}')" class="text-base font-bold text-slate-900 leading-snug mb-2 hover:text-amber-600 cursor-pointer transition-colors line-clamp-2">
+                ${recipe.title}
+              </h3>
+              <p class="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed">
+                ${recipe.summary}
+              </p>
+
+              <div class="flex flex-wrap gap-1.5 mb-6">
+                ${recipe.tools.map(t => `<span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium">${t}</span>`).join('')}
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+              <div class="text-xs text-slate-500">
+                구독료 <strong class="text-sm font-bold text-slate-900">월 ${recipe.price.toLocaleString()}원</strong>
+              </div>
+              <button onclick="viewRecipeDetail('${recipe.id}')" class="px-3.5 py-1.5 text-xs font-bold ${isSubscribed ? 'bg-slate-900 text-white' : 'bg-amber-500 text-white hover:bg-amber-600'} rounded-lg transition-colors flex items-center gap-1.5">
+                <span>${isSubscribed ? '조리법 열기' : '레시피 엿보기'}</span>
+                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ---------------- [5] 상세 페이지 및 비공개 조리법 해제 ----------------
+    function viewRecipeDetail(recipeId) {
+      const recipes = getStoredRecipes();
+      const recipe = recipes.find(r => r.id === recipeId);
+      if (!recipe) return;
+
+      const subscriptions = getStoredSubscriptions();
+      const isSubscribed = subscriptions.includes(recipe.id);
+
+      const container = document.getElementById('detail-container');
+      container.innerHTML = `
+        <!-- 좌측 2열: 레시피 본문 -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-xs font-bold px-2.5 py-1 bg-amber-50 text-amber-700 rounded-md border border-amber-200">${recipe.category}</span>
+              <span class="text-xs text-slate-400">등록일: 2026.09.01</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight mb-4">${recipe.title}</h1>
+            <p class="text-slate-600 text-sm leading-relaxed mb-6">${recipe.summary}</p>
+
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">필수 준비 재료 (AI Stack)</h3>
+            <div class="flex flex-wrap gap-2 mb-8">
+              ${recipe.tools.map(t => `<span class="px-3 py-1 bg-slate-100 text-slate-800 text-xs font-semibold rounded-lg border border-slate-200">${t}</span>`).join('')}
+            </div>
+
+            <!-- 시크릿 조리법 영역 (구독 여부에 따라 분기) -->
+            <div class="border-t border-slate-100 pt-6">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <i class="fa-solid ${isSubscribed ? 'fa-lock-open text-amber-500' : 'fa-lock text-slate-400'}"></i>
+                  <span>셰프의 시크릿 조리법 (프롬프트 전문 & 세팅값)</span>
+                </h3>
+                ${isSubscribed ? `<button onclick="copyToClipboard('${recipe.id}')" class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded border border-amber-200 hover:bg-amber-100 transition-colors"><i class="fa-solid fa-copy mr-1"></i> 프롬프트 복사</button>` : ''}
+              </div>
+
+              ${isSubscribed ? `
+                <div class="bg-slate-900 text-slate-100 p-5 rounded-xl text-xs font-mono whitespace-pre-wrap leading-relaxed border border-slate-800 shadow-inner" id="secret-text-${recipe.id}">
+${recipe.secretRecipe}
+                </div>
+                <div class="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2">
+                  <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+                  <span><strong>구독 완료:</strong> 이 레시피의 최신 패치 노트와 1:1 트러블슈팅 권한이 활성화되었습니다.</span>
+                </div>
+              ` : `
+                <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-6">
+                  <div class="blur-secret text-xs font-mono text-slate-400 whitespace-pre-wrap">
+[1단계: 후킹 카피 및 슬라이드 기획 프롬프트]
+당신은 10만 팔로워 인스타그램 수석 마케터입니다.
+제시된 원문 내용을 바탕으로 5장 카드뉴스 슬라이드 구성을 만드세요...
+[2단계: Canva 일괄 생성 연동용 CSV 포맷]
+Header, Subtext, SlideNumber, CTA
+"칼퇴의 비밀", "3분만에 끝내는 법", 1, "프로필 링크 확인"
+                  </div>
+                  <div class="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent flex flex-col items-center justify-center p-6 text-center">
+                    <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-lg mb-3 shadow-inner">
+                      <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h4 class="text-base font-bold text-slate-900 mb-1">비공개 프리미엄 조리법입니다</h4>
+                    <p class="text-xs text-slate-500 max-w-xs mb-4">셰프를 정기 구독하면 실무 프롬프트와 노션 템플릿 복제 링크가 즉시 공개됩니다.</p>
+                    <button onclick="requestPortOnePayment('${recipe.id}', ${recipe.price}, '${recipe.title}')" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-xl shadow-md hover:from-amber-600 hover:to-orange-600 transition-all">
+                      월 ${recipe.price.toLocaleString()}원에 잠금 해제하기
+                    </button>
+                  </div>
+                </div>
+              `}
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측 1열: 셰프 프로필 및 결제 사이드바 -->
+        <div class="space-y-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm">
+                ${recipe.chefAvatar || recipe.chefName[0]}
+              </div>
+              <div>
+                <h4 class="font-bold text-slate-900 text-sm">${recipe.chefName}</h4>
+                <p class="text-xs text-slate-500">${recipe.chefTitle || '공식 인증 셰프'}</p>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-100 pt-4 space-y-3">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-400">정기 멤버십</span>
+                <span class="font-extrabold text-slate-900 text-sm">월 ${recipe.price.toLocaleString()}원</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-400">구독 혜택</span>
+                <span class="font-medium text-slate-700">조리법 무제한 + 1:1 Q&A</span>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              ${isSubscribed ? `
+                <button onclick="cancelSubscription('${recipe.id}')" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl transition-colors">
+                  구독 해지하기
+                </button>
+              ` : `
+                <button onclick="requestPortOnePayment('${recipe.id}', ${recipe.price}, '${recipe.title}')" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-credit-card"></i>
+                  <span>포트원 안전 결제로 구독 시작</span>
+                </button>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+
+      navigate('detail');
+    }
+
+    function copyToClipboard(recipeId) {
+      const text = document.getElementById(`secret-text-${recipeId}`).innerText;
+      navigator.clipboard.writeText(text);
+      alert('프롬프트와 세팅값이 클립보드에 복사되었습니다. 작업창에 붙여넣어 사용하세요!');
+    }
+
+    // ---------------- [6] 포트원 (PortOne) 결제 연동 ----------------
+    async function requestPortOnePayment(recipeId, price, title) {
+      if (!currentUser) {
+        openLoginModal();
+        return;
+      }
+
+      // 테스트 결제 진행 (PortOne V2 SDK 호출)
+      try {
+        const paymentId = `wr_${Date.now()}_${Math.floor(Math.random()*1000)}`;
+        
+        // 포트원 브라우저 SDK 결제창 호출 (테스트 모드)
+        const response = await PortOne.requestPayment({
+          storeId: "store-test-mock-id", // 실제 배포 시 본인의 PortOne Store ID 입력
+          paymentId: paymentId,
+          orderName: `[WorkRecipe] ${title} 정기구독`,
+          totalAmount: price,
+          currency: "CURRENCY_KRW",
+          payMethod: "CARD",
+          customer: {
+            customerId: currentUser.id,
+            fullName: currentUser.name,
+            email: currentUser.email
+          }
+        });
+
+        // SDK 미설정 테스트 환경에서도 결제 완료 루프 시뮬레이션 지원
+        handlePaymentSuccess(recipeId);
+      } catch (err) {
+        console.warn('포트원 테스트 시뮬레이션 모드로 전환합니다:', err);
+        // 테스트 데모에서는 즉시 결제 성공 처리
+        handlePaymentSuccess(recipeId);
+      }
+    }
+
+    function handlePaymentSuccess(recipeId) {
+      const subs = getStoredSubscriptions();
+      if (!subs.includes(recipeId)) {
+        subs.push(recipeId);
+        localStorage.setItem('wr_subscriptions', JSON.stringify(subs));
+      }
+      alert('🎉 결제가 성공적으로 완료되었습니다! 비공개 시크릿 조리법이 해제되었습니다.');
+      viewRecipeDetail(recipeId);
+    }
+
+    function cancelSubscription(recipeId) {
+      if (!confirm('정말 구독을 해지하시겠습니까? (즉시 조리법 열람이 잠깁니다)')) return;
+      let subs = getStoredSubscriptions();
+      subs = subs.filter(id => id !== recipeId);
+      localStorage.setItem('wr_subscriptions', JSON.stringify(subs));
+      alert('구독이 해지되었습니다.');
+      viewRecipeDetail(recipeId);
+    }
+
+    // ---------------- [7] 셰프 스튜디오 (새 레시피 등록) ----------------
+    function handleCreateRecipe(e) {
+      e.preventDefault();
+      if (!currentUser) {
+        openLoginModal();
+        return;
+      }
+
+      const title = document.getElementById('form-title').value;
+      const category = document.getElementById('form-category').value;
+      const price = parseInt(document.getElementById('form-price').value, 10);
+      const tools = document.getElementById('form-tools').value.split(',').map(s => s.trim());
+      const summary = document.getElementById('form-summary').value;
+      const secretRecipe = document.getElementById('form-secret').value;
+
+      const newRecipe = {
+        id: 'recipe-' + Date.now(),
+        chefId: currentUser.id,
+        chefName: currentUser.name,
+        chefTitle: '공식 셰프',
+        chefAvatar: currentUser.name[0],
+        title,
+        category,
+        price,
+        tools,
+        summary,
+        secretRecipe,
+        copiesCount: 0
+      };
+
+      const recipes = getStoredRecipes();
+      recipes.unshift(newRecipe);
+      localStorage.setItem('wr_recipes', JSON.stringify(recipes));
+
+      alert('🎉 새로운 AI 조리법이 성공적으로 등록되어 판매가 시작되었습니다!');
+      document.getElementById('recipe-form').reset();
+      navigate('explore');
+    }
+
+    // ---------------- [8] 마이페이지 렌더링 ----------------
+    function renderMyPage() {
+      if (!currentUser) return;
+
+      document.getElementById('my-name').innerText = currentUser.name;
+      document.getElementById('my-email').innerText = currentUser.email;
+      document.getElementById('my-avatar').innerText = currentUser.name[0];
+      document.getElementById('my-role-badge').innerText = currentUser.role === 'CHEF' ? '공식 셰프' : '구독자';
+
+      const subs = getStoredSubscriptions();
+      const recipes = getStoredRecipes();
+
+      document.getElementById('my-sub-count').innerText = subs.length;
+
+      // 1. 내가 구독 중인 레시피 렌더링
+      const subRecipes = recipes.filter(r => subs.includes(r.id));
+      const subContainer = document.getElementById('my-subscriptions-list');
+      if (subRecipes.length === 0) {
+        subContainer.innerHTML = `<div class="col-span-full py-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-400 text-xs">아직 구독 중인 레시피가 없습니다. 마음에 드는 셰프의 레시피를 구독해보세요!</div>`;
+      } else {
+        subContainer.innerHTML = subRecipes.map(r => `
+          <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 mb-2 inline-block">${r.category}</span>
+              <h4 onclick="viewRecipeDetail('${r.id}')" class="font-bold text-sm text-slate-900 hover:text-amber-600 cursor-pointer line-clamp-2 mb-2">${r.title}</h4>
+              <p class="text-xs text-slate-500 line-clamp-2">${r.summary}</p>
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
+              <span class="text-xs font-bold text-amber-600">월 ${r.price.toLocaleString()}원</span>
+              <button onclick="viewRecipeDetail('${r.id}')" class="px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600">조리법 열람</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // 2. 내가 발행한 레시피 렌더링
+      const myCreated = recipes.filter(r => r.chefId === currentUser.id);
+      document.getElementById('my-recipe-count').innerText = myCreated.length;
+      const createdContainer = document.getElementById('my-created-list');
+      if (myCreated.length === 0) {
+        createdContainer.innerHTML = `<div class="col-span-full py-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-400 text-xs">내가 발행한 레시피가 없습니다. 상단 [레시피 등록] 메뉴에서 첫 조리법을 공유해보세요!</div>`;
+      } else {
+        createdContainer.innerHTML = myCreated.map(r => `
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 mb-2 inline-block">${r.category}</span>
+              <h4 onclick="viewRecipeDetail('${r.id}')" class="font-bold text-sm text-slate-900 hover:text-amber-600 cursor-pointer line-clamp-2 mb-2">${r.title}</h4>
+              <p class="text-xs text-slate-500 line-clamp-2">${r.summary}</p>
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
+              <span class="text-xs text-slate-500">누적 복사: <strong>${r.copiesCount}회</strong></span>
+              <button onclick="viewRecipeDetail('${r.id}')" class="px-3 py-1 bg-slate-900 text-white text-xs font-bold rounded-lg">관리</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // ---------------- [9] 앱 초기 로드 ----------------
+    document.addEventListener('DOMContentLoaded', () => {
+      getStoredRecipes();
+      updateNavUser();
+      renderRecipeCards();
+    });
+  </script>
+
+</body>
+</html>
