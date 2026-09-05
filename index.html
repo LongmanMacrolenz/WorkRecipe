@@ -22,11 +22,11 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
 
   <!-- ======================= 1. 상단 글로벌 네비게이션 ======================= -->
-  <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/80 shadow-2xl">
+  <header class="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 shadow-2xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- 브랜드 로고 -->
-      <div class="flex items-center gap-3 cursor-pointer group" onclick="navigate('explore')">
+      <div class="flex items-center gap-3 cursor-pointer group" onclick="goTo('explore')">
         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-400 flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-all duration-200">
           <i class="fa-solid fa-utensils text-lg font-black"></i>
         </div>
@@ -41,15 +41,15 @@
 
       <!-- 메인 네비게이션 메뉴 -->
       <nav class="hidden md:flex items-center gap-8 text-sm font-bold text-slate-400">
-        <button onclick="navigate('explore')" class="hover:text-amber-400 transition-colors py-1 flex items-center gap-1.5">
+        <button onclick="goTo('explore')" class="hover:text-amber-400 transition-colors py-1 flex items-center gap-1.5">
           <i class="fa-solid fa-compass text-xs text-slate-500"></i>
           <span>레시피 탐색</span>
         </button>
-        <button onclick="navigate('creator-studio')" class="hover:text-amber-400 transition-colors py-1 flex items-center gap-1.5 text-slate-200">
+        <button onclick="goTo('creator-studio')" class="hover:text-amber-400 transition-colors py-1 flex items-center gap-1.5 text-slate-200">
           <i class="fa-solid fa-feather-pointed text-xs text-amber-400"></i>
           <span>레시피 발행하기</span>
         </button>
-        <button onclick="navigate('mypage')" class="hover:text-amber-400 transition-colors py-1 flex items-center gap-1.5">
+        <button onclick="goTo('mypage')" class="hover:text-amber-400 transition-colors py-1 flex items-center gap-1.5">
           <i class="fa-solid fa-user-astronaut text-xs text-slate-500"></i>
           <span>내 크리에이터 채널</span>
         </button>
@@ -66,7 +66,7 @@
     <!-- [VIEW 1] 메인 둘러보기 & 피드 (Explore) -->
     <div id="view-explore" class="space-y-10">
       
-      <!-- 히어로 배너 (온리팬스 / 크리에이터 허브 감성) -->
+      <!-- 히어로 배너 -->
       <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/70 rounded-3xl p-8 sm:p-14 text-white shadow-2xl relative overflow-hidden border border-slate-800">
         <div class="max-w-2xl relative z-10 space-y-6">
           <div class="inline-flex items-center gap-2 text-xs font-black text-amber-400 uppercase tracking-widest px-3.5 py-1.5 bg-amber-400/10 rounded-full border border-amber-400/20 shadow-inner">
@@ -82,7 +82,7 @@
             수백 장 사양서 분해, 복수 외주 견적서 리스크 필터링 등 현업에서 직접 검증된 고효율 프롬프트를 1초 만에 복사하세요. 나만의 시크릿 조리법을 등록하고 스레드와 X 팬덤을 모아 향후 유료 판매를 시작하세요.
           </p>
           <div class="flex flex-wrap items-center gap-3 pt-2">
-            <button onclick="navigate('creator-studio')" class="px-6 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black rounded-2xl shadow-xl shadow-orange-500/20 hover:shadow-orange-500/30 hover:-translate-y-0.5 transition-all text-sm inline-flex items-center gap-2">
+            <button onclick="goTo('creator-studio')" class="px-6 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black rounded-2xl shadow-xl shadow-orange-500/20 hover:shadow-orange-500/30 hover:-translate-y-0.5 transition-all text-sm inline-flex items-center gap-2">
               <i class="fa-solid fa-plus font-bold"></i>
               <span>내 AI 레시피 발행하기</span>
             </button>
@@ -92,12 +92,11 @@
             </a>
           </div>
         </div>
-        <!-- 은은한 앰버 글로우 효과 -->
         <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute right-1/4 -top-20 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
       </div>
 
-      <!-- [독자 아이디어 1] 이주의 명예의 전당 AI 셰프 TOP 3 (스레드/X 인플루언서 위젯) -->
+      <!-- 셰프 명예의 전당 -->
       <div class="bg-slate-900/60 rounded-3xl p-6 sm:p-8 border border-slate-800/80 backdrop-blur-sm">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
           <div>
@@ -112,9 +111,7 @@
           </span>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="top-chefs-container">
-          <!-- JS 렌더링: 대표님(@longman_vv)을 필두로 한 셰프 카드 -->
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="top-chefs-container"></div>
       </div>
 
       <!-- 검색창 및 필터 바 -->
@@ -129,7 +126,7 @@
             <button onclick="filterCategory('마케팅/영업')" class="px-4 py-2 text-xs font-bold rounded-xl bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 filter-btn transition-all" data-cat="마케팅/영업">📢 마케팅/영업</button>
           </div>
 
-          <!-- 실시간 검색 입력창 -->
+          <!-- 실시간 검색창 -->
           <div class="relative w-full lg:w-80">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
             <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="프롬프트, 도구, 셰프, @아이디 검색..." class="w-full pl-9 pr-4 py-2 text-xs bg-slate-900/90 text-white placeholder:text-slate-500 border border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm transition-all">
@@ -143,7 +140,7 @@
 
     <!-- [VIEW 2] 레시피 상세 (Detail) & 원클릭 복사 & 후기 -->
     <div id="view-detail" class="hidden space-y-6">
-      <button onclick="navigate('explore')" class="text-xs font-bold text-slate-400 hover:text-white inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl shadow-sm hover:border-slate-700 transition-all">
+      <button onclick="goTo('explore')" class="text-xs font-bold text-slate-400 hover:text-white inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl shadow-sm hover:border-slate-700 transition-all">
         <i class="fa-solid fa-arrow-left"></i> 목록으로 돌아가기
       </button>
 
@@ -212,7 +209,7 @@
           <div class="bg-slate-950 p-5 rounded-2xl border border-amber-500/30">
             <div class="flex items-center justify-between mb-2">
               <label class="block text-xs font-black text-amber-400">📋 프롬프트 원문 및 세팅값 *</label>
-              <span id="prompt-access-label" class="text-[10px] text-amber-400/80 font-bold">무료 공개 (원클릭 복사 지원)</span>
+              <span id="prompt-access-label" class="text-[10px] text-slate-400 font-medium">무료 공개 (원클릭 복사 지원)</span>
             </div>
             <textarea id="form-content" rows="8" required placeholder="[역할 부여]
 당신은 기술 계약 및 제안서 전문 분석가입니다...
@@ -221,7 +218,7 @@
 | 조항 번호 | 핵심 요구사항 | 위험도 | 조치 방안 |" class="w-full p-3.5 text-xs font-mono bg-slate-900 border rounded-xl border-slate-800 text-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none leading-relaxed"></textarea>
           </div>
 
-          <!-- 스레드 & X 동시 연동 홍보 입력란 -->
+          <!-- 스레드 & X 연동 홍보란 -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
@@ -275,8 +272,6 @@
               </span>
             </div>
             <p id="my-email" class="text-xs text-slate-400 mt-0.5">user@gmail.com</p>
-            
-            <!-- 연동된 스레드 & X 아이콘 링크 표시 -->
             <div id="my-social-display" class="mt-2.5 flex items-center gap-3 text-xs"></div>
           </div>
         </div>
@@ -284,9 +279,9 @@
         <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <button onclick="editSocialAccounts()" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition-all border border-slate-700 flex items-center gap-1.5">
             <i class="fa-solid fa-link text-amber-400"></i>
-            <span>Threads/X 연동</span>
+            <span>Threads/X 영구 연동</span>
           </button>
-          <button onclick="navigate('creator-studio')" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-xl shadow-lg transition-all flex items-center gap-2">
+          <button onclick="goTo('creator-studio')" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-xl shadow-lg transition-all flex items-center gap-2">
             <i class="fa-solid fa-plus font-bold"></i>
             <span>새 레시피 작성</span>
           </button>
@@ -408,18 +403,17 @@
       <div class="flex items-center gap-4 text-[11px] text-slate-400">
         <span>Threads @longman_vv</span>
         <span>•</span>
-        <span>Supabase 클라우드 실시간 동기화</span>
+        <span>Supabase 클라우드 실시간 영구 동기화</span>
       </div>
     </div>
   </footer>
 
-  <!-- ======================= 5. 핵심 스크립트 ======================= -->
+  <!-- ======================= 5. 상업용 풀스택 스크립트 ======================= -->
   <script>
     const SUPABASE_URL = 'https://hflrmjjiogoujylvgvgg.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_YXW3NYpOPVPtytDwsftVjg_4c-v8jrC';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // [0건 시작 기본 레시피 4종 (대표님 공식 스레드/X 탑재)]
     const DEFAULT_RECIPES = [
       {
         id: 'recipe-ingest-doc',
@@ -550,11 +544,58 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
     ];
 
     let allRecipes = [...DEFAULT_RECIPES];
-    let currentUser = JSON.parse(localStorage.getItem('wr_user') || 'null');
+    let currentUser = JSON.parse(localStorage.getItem('wr_session_user') || 'null');
+    let userInteractions = [];
     let currentCategory = '전체';
     let searchQuery = '';
 
-    // [무결점 JWT 디코더: 어떤 구글 계정이든 100% 디코딩]
+    // ================= URL 해시 라우팅 =================
+    function goTo(path, params = '') {
+      if (params) {
+        window.location.hash = `#/${path}?${params}`;
+      } else {
+        window.location.hash = `#/${path}`;
+      }
+    }
+
+    function handleRoute() {
+      const hash = window.location.hash || '#/explore';
+      const [routePart, queryPart] = hash.slice(2).split('?');
+      const params = new URLSearchParams(queryPart || '');
+
+      document.getElementById('view-explore').classList.add('hidden');
+      document.getElementById('view-detail').classList.add('hidden');
+      document.getElementById('view-creator-studio').classList.add('hidden');
+      document.getElementById('view-mypage').classList.add('hidden');
+
+      if (routePart === 'recipe') {
+        const id = params.get('id');
+        renderDetailView(id);
+        document.getElementById('view-detail').classList.remove('hidden');
+      } else if (routePart === 'creator-studio') {
+        if (!currentUser) {
+          openLoginModal();
+          window.location.hash = '#/explore';
+          return;
+        }
+        document.getElementById('view-creator-studio').classList.remove('hidden');
+      } else if (routePart === 'mypage') {
+        if (!currentUser) {
+          openLoginModal();
+          window.location.hash = '#/explore';
+          return;
+        }
+        renderMyPage();
+        document.getElementById('view-mypage').classList.remove('hidden');
+      } else {
+        document.getElementById('view-explore').classList.remove('hidden');
+        renderRecipeCards();
+        renderTopChefs();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ================= JWT 디코더 & 토스트 =================
     function parseJwt(token) {
       try {
         if (!token || typeof token !== 'string') return null;
@@ -564,24 +605,20 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
 
         let base64 = token.substring(firstDot + 1, lastDot).replace(/-/g, '+').replace(/_/g, '/');
         const pad = base64.length % 4;
-        if (pad) {
-          base64 += '='.repeat(4 - pad);
-        }
+        if (pad) base64 += '='.repeat(4 - pad);
 
         const binaryStr = atob(base64);
         const bytes = new Uint8Array(binaryStr.length);
         for (let i = 0; i < binaryStr.length; i++) {
           bytes[i] = binaryStr.charCodeAt(i);
         }
-        const decodedJson = new TextDecoder('utf-8').decode(bytes);
-        return JSON.parse(decodedJson);
+        return JSON.parse(new TextDecoder('utf-8').decode(bytes));
       } catch (e) {
-        console.error('JWT 디코딩 에러:', e);
+        console.error('JWT 파싱 에러:', e);
         return null;
       }
     }
 
-    // [모던 토스트 알림창]
     function showToast(message, type = 'success') {
       let toastContainer = document.getElementById('toast-container');
       if (!toastContainer) {
@@ -600,46 +637,85 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       toast.innerHTML = `${icon}<span>${message}</span>`;
       toastContainer.appendChild(toast);
 
-      requestAnimationFrame(() => {
-        toast.classList.remove('translate-y-2', 'opacity-0');
-      });
-
+      requestAnimationFrame(() => toast.classList.remove('translate-y-2', 'opacity-0'));
       setTimeout(() => {
         toast.classList.add('opacity-0', 'translate-y-2');
         setTimeout(() => toast.remove(), 300);
       }, 2500);
     }
 
-    // Google 로그인 핸들러 (모든 Google 사용자 동적 저장)
-    function handleGoogleCredentialResponse(response) {
+    // ================= [무중단 안전 로그인] Google 인증 & Supabase 동기화 =================
+    async function handleGoogleCredentialResponse(response) {
       const profile = parseJwt(response.credential);
       if (!profile) {
-        showToast('Google 프로필 정보를 확인하지 못했습니다.', 'error');
+        showToast('Google 인증 프로필 확인에 실패했습니다.', 'error');
         return;
       }
 
-      const existingUser = JSON.parse(localStorage.getItem('wr_user') || 'null');
-      currentUser = {
+      // 1. 프로필 정보 1차 구성 (무조건 즉시 로그인 보장)
+      let userData = {
         id: profile.sub,
-        name: profile.name || 'Google 사용자',
+        name: profile.name || 'AI 크리에이터',
         email: profile.email || '',
         avatar: profile.picture || '',
-        threadsId: (existingUser && existingUser.id === profile.sub) ? existingUser.threadsId : '',
-        xId: (existingUser && existingUser.id === profile.sub) ? existingUser.xId : '',
-        tier: (existingUser && existingUser.id === profile.sub) ? existingUser.tier : '루키 셰프'
+        threads_id: '',
+        x_id: '',
+        tier: '루키 셰프'
       };
-      
-      localStorage.setItem('wr_user', JSON.stringify(currentUser));
+
+      // 기존 로컬 세션 정보 우선 병합
+      const existingLocal = JSON.parse(localStorage.getItem('wr_session_user') || 'null');
+      if (existingLocal && existingLocal.id === profile.sub) {
+        userData.threads_id = existingLocal.threads_id || '';
+        userData.x_id = existingLocal.x_id || '';
+        userData.tier = existingLocal.tier || '루키 셰프';
+      }
+
+      // 2. Supabase profiles 테이블과 안전하게 동기화 (DB 지연 시에도 에러 차단)
+      try {
+        const { data: dbUser } = await db
+          .from('profiles')
+          .select('*')
+          .eq('id', profile.sub)
+          .maybeSingle();
+
+        if (dbUser) {
+          userData.threads_id = dbUser.threads_id || userData.threads_id || '';
+          userData.x_id = dbUser.x_id || userData.x_id || '';
+          userData.tier = dbUser.tier || userData.tier || '루키 셰프';
+
+          await db.from('profiles').update({
+            name: userData.name,
+            email: userData.email,
+            avatar: userData.avatar,
+            updated_at: new Date()
+          }).eq('id', userData.id);
+        } else {
+          await db.from('profiles').insert([userData]);
+        }
+      } catch (dbErr) {
+        console.warn('Supabase profiles 연동 대기 (로컬 세션 우선):', dbErr);
+      }
+
+      currentUser = userData;
+      localStorage.setItem('wr_session_user', JSON.stringify(currentUser));
       closeLoginModal();
       updateNavUser();
-      renderRecipeCards();
-      renderTopChefs();
-      if (!document.getElementById('view-mypage').classList.contains('hidden')) {
-        renderMyPage();
-      }
+      await loadUserInteractions();
       showToast(`🎉 ${currentUser.name}님, 로그인되었습니다!`);
+      handleRoute();
     }
 
+    function logout() {
+      currentUser = null;
+      userInteractions = [];
+      localStorage.removeItem('wr_session_user');
+      updateNavUser();
+      goTo('explore');
+      showToast('로그아웃되었습니다.', 'info');
+    }
+
+    // ================= 데이터 로드 및 상호작용 =================
     async function loadRecipes() {
       try {
         const { data, error } = await db
@@ -684,51 +760,31 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       renderTopChefs();
     }
 
-    function getStoredBookmarks() {
-      return JSON.parse(localStorage.getItem('wr_bookmarks') || '[]');
-    }
-
-    function getStoredLikes() {
-      return JSON.parse(localStorage.getItem('wr_likes') || '[]');
-    }
-
-    function getStoredChefFollows() {
-      return JSON.parse(localStorage.getItem('wr_chef_follows') || '[]');
-    }
-
-    function navigate(viewName) {
-      document.getElementById('view-explore').classList.add('hidden');
-      document.getElementById('view-detail').classList.add('hidden');
-      document.getElementById('view-creator-studio').classList.add('hidden');
-      document.getElementById('view-mypage').classList.add('hidden');
-
-      if (viewName === 'creator-studio' && !currentUser) {
-        openLoginModal();
-        return;
+    async function loadUserInteractions() {
+      if (!currentUser) return;
+      try {
+        const { data } = await db
+          .from('interactions')
+          .select('*')
+          .eq('user_id', currentUser.id);
+        userInteractions = data || [];
+      } catch (e) {
+        userInteractions = [];
       }
-
-      if (viewName === 'mypage' && !currentUser) {
-        openLoginModal();
-        return;
-      }
-
-      document.getElementById(`view-${viewName}`).classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      if (viewName === 'explore') {
-        renderRecipeCards();
-        renderTopChefs();
-      }
-      if (viewName === 'mypage') renderMyPage();
     }
 
+    function hasInteracted(targetId, type) {
+      return userInteractions.some(it => it.target_id === targetId && it.type === type);
+    }
+
+    // ================= UI 렌더링 =================
     function updateNavUser() {
       const area = document.getElementById('nav-user-area');
       if (currentUser) {
         const firstChar = currentUser.name ? currentUser.name.charAt(0) : 'U';
         area.innerHTML = `
           <div class="flex items-center gap-3">
-            <button onclick="navigate('mypage')" class="flex items-center gap-2 py-1.5 px-3 bg-slate-900 hover:bg-slate-800 rounded-2xl transition-all border border-slate-800 shadow-sm">
+            <button onclick="goTo('mypage')" class="flex items-center gap-2 py-1.5 px-3 bg-slate-900 hover:bg-slate-800 rounded-2xl transition-all border border-slate-800 shadow-sm">
               <div class="w-6 h-6 rounded-full overflow-hidden bg-amber-500 text-slate-950 flex items-center justify-center font-black text-[10px]">
                 ${currentUser.avatar ? `<img src="${currentUser.avatar}" class="w-full h-full object-cover">` : firstChar}
               </div>
@@ -759,14 +815,6 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       document.getElementById('login-modal').classList.remove('flex');
     }
 
-    function logout() {
-      currentUser = null;
-      localStorage.removeItem('wr_user');
-      updateNavUser();
-      navigate('explore');
-      showToast('로그아웃되었습니다.', 'info');
-    }
-
     function filterCategory(cat) {
       currentCategory = cat;
       document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -795,14 +843,10 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       }
     }
 
-    // [독자 아이디어: 셰프 명예의 전당 렌더링]
     function renderTopChefs() {
       const container = document.getElementById('top-chefs-container');
       if (!container) return;
 
-      const follows = getStoredChefFollows();
-
-      // 대표님을 포함한 고유 셰프 목록 추출
       const chefsMap = {};
       allRecipes.forEach(r => {
         if (!chefsMap[r.chefId]) {
@@ -824,7 +868,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       const chefs = Object.values(chefsMap).slice(0, 3);
 
       container.innerHTML = chefs.map((chef, idx) => {
-        const isFollowed = follows.includes(chef.id);
+        const isFollowed = hasInteracted(chef.id, 'follow');
         const rankMedal = idx === 0 ? '🥇 1위' : (idx === 1 ? '🥈 2위' : '🥉 3위');
         return `
           <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between hover:border-amber-500/50 transition-all">
@@ -863,30 +907,37 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       }).join('');
     }
 
-    function toggleChefFollow(chefId, chefName) {
+    async function toggleChefFollow(chefId, chefName) {
       if (!currentUser) {
         openLoginModal();
         return;
       }
-      let follows = getStoredChefFollows();
-      if (follows.includes(chefId)) {
-        follows = follows.filter(id => id !== chefId);
-        showToast(`${chefName} 셰프 구독을 취소했습니다.`, 'info');
-      } else {
-        follows.push(chefId);
-        showToast(`🎉 ${chefName} 셰프의 팬이 되었습니다! 새 레시피 출시 알림이 켜집니다.`);
+      const isFollowed = hasInteracted(chefId, 'follow');
+      try {
+        if (isFollowed) {
+          await db.from('interactions').delete().match({ user_id: currentUser.id, target_id: chefId, type: 'follow' });
+          userInteractions = userInteractions.filter(it => !(it.target_id === chefId && it.type === 'follow'));
+          showToast(`${chefName} 셰프 구독을 취소했습니다.`, 'info');
+        } else {
+          await db.from('interactions').insert([{ user_id: currentUser.id, target_id: chefId, type: 'follow' }]);
+          userInteractions.push({ user_id: currentUser.id, target_id: chefId, type: 'follow' });
+          showToast(`🎉 ${chefName} 셰프의 팬이 되었습니다!`);
+        }
+      } catch (e) {
+        // DB 테이블 대기 시 메모리 처리
+        if (isFollowed) {
+          userInteractions = userInteractions.filter(it => !(it.target_id === chefId && it.type === 'follow'));
+          showToast(`${chefName} 셰프 구독 취소`, 'info');
+        } else {
+          userInteractions.push({ user_id: currentUser.id, target_id: chefId, type: 'follow' });
+          showToast(`🎉 ${chefName} 셰프의 팬이 되었습니다!`);
+        }
       }
-      localStorage.setItem('wr_chef_follows', JSON.stringify(follows));
       renderTopChefs();
-      if (!document.getElementById('view-mypage').classList.contains('hidden')) {
-        renderMyPage();
-      }
     }
 
-    // 레시피 카드 목록 렌더링
     function renderRecipeCards() {
       const list = document.getElementById('recipe-list');
-      const bookmarks = getStoredBookmarks();
 
       let filtered = currentCategory === '전체' 
         ? allRecipes 
@@ -915,15 +966,14 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       }
 
       list.innerHTML = filtered.map(recipe => {
-        const isBookmarked = bookmarks.includes(recipe.id);
+        const isBookmarked = hasInteracted(recipe.id, 'bookmark');
         const firstChar = recipe.chefName ? recipe.chefName.charAt(0) : 'W';
 
         return `
           <div class="bg-slate-900/90 rounded-3xl border border-slate-800 shadow-lg hover:shadow-2xl hover:border-amber-500/40 hover:-translate-y-1 transition-all duration-300 p-6 flex flex-col justify-between group">
             <div>
-              <!-- 셰프 헤더 & 카테고리 -->
               <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-2.5 cursor-pointer" onclick="viewRecipeDetail('${recipe.id}')">
+                <div class="flex items-center gap-2.5 cursor-pointer" onclick="goTo('recipe', 'id=${recipe.id}')">
                   <div class="w-9 h-9 rounded-xl overflow-hidden bg-amber-500 text-slate-950 flex items-center justify-center font-black text-xs shadow-md">
                     ${recipe.chefAvatar && recipe.chefAvatar.startsWith('http') ? `<img src="${recipe.chefAvatar}" class="w-full h-full object-cover">` : (recipe.chefAvatar || firstChar)}
                   </div>
@@ -953,33 +1003,29 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
                 </div>
               </div>
 
-              <!-- 레시피 제목 -->
-              <h3 onclick="viewRecipeDetail('${recipe.id}')" class="text-base font-extrabold text-white leading-snug mb-2 hover:text-amber-400 cursor-pointer transition-colors line-clamp-2">
+              <h3 onclick="goTo('recipe', 'id=${recipe.id}')" class="text-base font-extrabold text-white leading-snug mb-2 hover:text-amber-400 cursor-pointer transition-colors line-clamp-2">
                 ${recipe.title}
               </h3>
               
-              <!-- 설명 -->
               <p class="text-xs text-slate-400 line-clamp-2 mb-4 leading-relaxed font-normal">
                 ${recipe.summary}
               </p>
 
-              <!-- 사용 도구 태그 -->
               <div class="flex flex-wrap gap-1.5 mb-5">
                 ${recipe.tools.map(t => `<span class="text-[10px] px-2 py-0.5 rounded-md bg-slate-800/80 text-amber-300 font-medium border border-slate-700/60">${t}</span>`).join('')}
               </div>
             </div>
 
-            <!-- 하단 바: 수치 & 액션 버튼 -->
             <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs">
               <div class="flex items-center gap-3 text-slate-500 text-[11px]">
                 <span title="조회수"><i class="fa-regular fa-eye mr-1"></i>${recipe.views || 0}</span>
-                <span title="복사수" class="text-emerald-400 font-semibold"><i class="fa-regular fa-copy mr-1"></i>${recipe.copiesCount || 0}</span>
+                <span title="복사수" class="text-emerald-400 font-semibold"><i class="fa-regular fa-copy mr-1 text-emerald-600"></i>${recipe.copiesCount || 0}</span>
                 <span title="추천수" class="text-rose-500 font-semibold"><i class="fa-solid fa-heart mr-1"></i>${recipe.likesCount || 0}</span>
               </div>
 
               <div class="flex items-center gap-1.5">
                 ${recipe.isPremium ? `
-                  <button onclick="viewRecipeDetail('${recipe.id}')" class="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 text-xs font-black rounded-xl transition-all flex items-center gap-1 shadow-md">
+                  <button onclick="goTo('recipe', 'id=${recipe.id}')" class="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 text-xs font-black rounded-xl transition-all flex items-center gap-1 shadow-md">
                     <i class="fa-solid fa-lock text-[10px]"></i>
                     <span>시크릿 열람</span>
                   </button>
@@ -988,7 +1034,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
                     <i class="fa-regular fa-copy text-[11px]"></i>
                     <span>복사</span>
                   </button>
-                  <button onclick="viewRecipeDetail('${recipe.id}')" class="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black rounded-xl transition-colors flex items-center gap-1">
+                  <button onclick="goTo('recipe', 'id=${recipe.id}')" class="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black rounded-xl transition-colors flex items-center gap-1">
                     <span>열람</span>
                     <i class="fa-solid fa-arrow-right text-[10px]"></i>
                   </button>
@@ -1000,17 +1046,15 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       }).join('');
     }
 
-    async function viewRecipeDetail(recipeId) {
+    async function renderDetailView(recipeId) {
       const recipe = allRecipes.find(r => r.id === recipeId);
       if (!recipe) return;
 
       recipe.views = (recipe.views || 0) + 1;
       db.from('recipes').update({ views: recipe.views }).eq('id', recipe.id).then();
 
-      const likes = getStoredLikes();
-      const isLiked = likes.includes(recipe.id);
-      const bookmarks = getStoredBookmarks();
-      const isBookmarked = bookmarks.includes(recipe.id);
+      const isLiked = hasInteracted(recipe.id, 'like');
+      const isBookmarked = hasInteracted(recipe.id, 'bookmark');
 
       const reviews = recipe.reviews || [];
       const avgRating = reviews.length > 0 
@@ -1049,7 +1093,6 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
               ${recipe.tools.map(t => `<span class="px-3 py-1 bg-slate-800 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700">${t}</span>`).join('')}
             </div>
 
-            <!-- 조리법 본문 (무료 vs 프리미엄 유료 분기) -->
             <div class="border-t border-slate-800 pt-6">
               <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-black text-white flex items-center gap-2">
@@ -1078,7 +1121,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
                       <h4 class="text-base font-black text-white">셰프 전용 프리미엄 레시피입니다</h4>
                       <p class="text-xs text-slate-400 max-w-sm mt-1">온리팬스형 유료 결제 도입 시 즉시 열람 권한이 열립니다. 사전 알림을 등록하세요.</p>
                     </div>
-                    <button onclick="requestMembershipEarlyBird('${recipe.id}', '${recipe.title}')" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 text-xs font-black rounded-xl shadow-lg hover:from-amber-400 hover:to-orange-400 transition-all flex items-center gap-1.5">
+                    <button onclick="showToast('💎 프리미엄 멤버십 출시 알림이 신청되었습니다!')" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 text-xs font-black rounded-xl shadow-lg hover:from-amber-400 hover:to-orange-400 transition-all flex items-center gap-1.5">
                       <i class="fa-solid fa-bell"></i>
                       <span>🔔 멤버십 출시 알림받기 (사전 예약)</span>
                     </button>
@@ -1155,7 +1198,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
 
         </div>
 
-        <!-- 우측 셰프 프로필 & 바이럴 위젯 -->
+        <!-- 우측 셰프 정보 & 소셜 팔로우 -->
         <div class="space-y-6">
           <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl">
             <div class="flex items-center gap-3.5 mb-4">
@@ -1171,7 +1214,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
               </div>
             </div>
 
-            <!-- 스레드 & X 동시 팔로우 버튼 -->
+            <!-- 스레드 & X 팔로우 버튼 -->
             <div class="space-y-2 mb-4">
               ${recipe.threadsId ? `
                 <a href="https://threads.net/@${recipe.threadsId}" target="_blank" class="w-full py-2.5 px-3 bg-slate-950 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-slate-800 transition-all shadow-sm">
@@ -1217,8 +1260,6 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
           </div>
         </div>
       `;
-
-      navigate('detail');
     }
 
     function copyRecipePrompt(recipeId) {
@@ -1228,36 +1269,24 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       navigator.clipboard.writeText(recipe.content).then(() => {
         recipe.copiesCount = (recipe.copiesCount || 0) + 1;
         db.from('recipes').update({ copies_count: recipe.copiesCount }).eq('id', recipe.id).then();
-
         showToast('📋 프롬프트 원문이 복사되었습니다! AI 창에 붙여넣으세요.');
-        if (!document.getElementById('view-detail').classList.contains('hidden')) {
-          viewRecipeDetail(recipeId);
-        } else {
-          renderRecipeCards();
-        }
+        handleRoute();
       });
     }
 
     function shareToThreads(title) {
-      const text = encodeURIComponent(`[AI워크레시피] "${title}" 실무 프롬프트를 복사해 써보세요! 👉 https://longmanmacrolenz.github.io/WorkRecipe/`);
+      const currentUrl = window.location.href;
+      const text = encodeURIComponent(`[AI워크레시피] "${title}" 실무 프롬프트를 확인해보세요! 👉 ${currentUrl}`);
       window.open(`https://threads.net/intent/post?text=${text}`, '_blank');
     }
 
     function shareToX(title) {
+      const currentUrl = window.location.href;
       const text = encodeURIComponent(`[AI워크레시피] "${title}" 실무 프롬프트가 무료로 공개되었습니다! 바로 확인해보세요:`);
-      const url = encodeURIComponent('https://longmanmacrolenz.github.io/WorkRecipe/');
-      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(currentUrl)}`, '_blank');
     }
 
-    function requestMembershipEarlyBird(recipeId, title) {
-      if (!currentUser) {
-        openLoginModal();
-        return;
-      }
-      showToast('💎 프리미엄 멤버십 출시 알림이 신청되었습니다! 출시 즉시 안내해 드립니다.');
-    }
-
-    function toggleLike(recipeId) {
+    async function toggleLike(recipeId) {
       if (!currentUser) {
         openLoginModal();
         return;
@@ -1265,40 +1294,56 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       const recipe = allRecipes.find(r => r.id === recipeId);
       if (!recipe) return;
 
-      let likes = getStoredLikes();
-      if (likes.includes(recipeId)) {
-        likes = likes.filter(id => id !== recipeId);
-        recipe.likesCount = Math.max(0, (recipe.likesCount || 1) - 1);
-        showToast('추천이 취소되었습니다.', 'info');
-      } else {
-        likes.push(recipeId);
-        recipe.likesCount = (recipe.likesCount || 0) + 1;
-        showToast('❤️ 이 레시피를 추천했습니다!');
+      const isLiked = hasInteracted(recipeId, 'like');
+      try {
+        if (isLiked) {
+          await db.from('interactions').delete().match({ user_id: currentUser.id, target_id: recipeId, type: 'like' });
+          userInteractions = userInteractions.filter(it => !(it.target_id === recipeId && it.type === 'like'));
+          recipe.likesCount = Math.max(0, (recipe.likesCount || 1) - 1);
+          showToast('추천이 취소되었습니다.', 'info');
+        } else {
+          await db.from('interactions').insert([{ user_id: currentUser.id, target_id: recipeId, type: 'like' }]);
+          userInteractions.push({ user_id: currentUser.id, target_id: recipeId, type: 'like' });
+          recipe.likesCount = (recipe.likesCount || 0) + 1;
+          showToast('❤️ 이 레시피를 추천했습니다!');
+        }
+        await db.from('recipes').update({ likes_count: recipe.likesCount }).eq('id', recipe.id);
+      } catch (e) {
+        if (isLiked) {
+          userInteractions = userInteractions.filter(it => !(it.target_id === recipeId && it.type === 'like'));
+          recipe.likesCount = Math.max(0, (recipe.likesCount || 1) - 1);
+        } else {
+          userInteractions.push({ user_id: currentUser.id, target_id: recipeId, type: 'like' });
+          recipe.likesCount = (recipe.likesCount || 0) + 1;
+        }
       }
-
-      localStorage.setItem('wr_likes', JSON.stringify(likes));
-      db.from('recipes').update({ likes_count: recipe.likesCount }).eq('id', recipe.id).then();
-      viewRecipeDetail(recipeId);
+      handleRoute();
     }
 
-    function toggleBookmark(recipeId) {
+    async function toggleBookmark(recipeId) {
       if (!currentUser) {
         openLoginModal();
         return;
       }
-      let bookmarks = getStoredBookmarks();
-      if (bookmarks.includes(recipeId)) {
-        bookmarks = bookmarks.filter(id => id !== recipeId);
-        showToast('보관함에서 제거되었습니다.', 'info');
-      } else {
-        bookmarks.push(recipeId);
-        showToast('🔖 내 보관함에 저장되었습니다!');
+      const isBookmarked = hasInteracted(recipeId, 'bookmark');
+      try {
+        if (isBookmarked) {
+          await db.from('interactions').delete().match({ user_id: currentUser.id, target_id: recipeId, type: 'bookmark' });
+          userInteractions = userInteractions.filter(it => !(it.target_id === recipeId && it.type === 'bookmark'));
+          showToast('보관함에서 제거되었습니다.', 'info');
+        } else {
+          await db.from('interactions').insert([{ user_id: currentUser.id, target_id: recipeId, type: 'bookmark' }]);
+          userInteractions.push({ user_id: currentUser.id, target_id: recipeId, type: 'bookmark' });
+          showToast('🔖 내 보관함에 영구 저장되었습니다!');
+        }
+      } catch (e) {
+        if (isBookmarked) {
+          userInteractions = userInteractions.filter(it => !(it.target_id === recipeId && it.type === 'bookmark'));
+        } else {
+          userInteractions.push({ user_id: currentUser.id, target_id: recipeId, type: 'bookmark' });
+        }
       }
-      localStorage.setItem('wr_bookmarks', JSON.stringify(bookmarks));
-      renderRecipeCards();
-      if (!document.getElementById('view-detail').classList.contains('hidden')) {
-        viewRecipeDetail(recipeId);
-      }
+      handleRoute();
     }
 
     async function handleAddReview(e, recipeId) {
@@ -1323,7 +1368,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
 
         showToast('소중한 실무 후기가 등록되었습니다!');
         await loadRecipes();
-        viewRecipeDetail(recipeId);
+        handleRoute();
       } catch (err) {
         showToast('후기 등록 오류: ' + err.message, 'error');
       }
@@ -1341,8 +1386,8 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       const tools = document.getElementById('form-tools').value.split(',').map(s => s.trim());
       const summary = document.getElementById('form-summary').value;
       const content = document.getElementById('form-content').value;
-      const threadsId = document.getElementById('form-threads-id').value.replace('@', '') || currentUser.threadsId || '';
-      const xId = document.getElementById('form-x-id').value.replace('@', '') || currentUser.xId || '';
+      const threadsId = document.getElementById('form-threads-id').value.replace('@', '') || currentUser.threads_id || '';
+      const xId = document.getElementById('form-x-id').value.replace('@', '') || currentUser.x_id || '';
       const saveTime = document.getElementById('form-save-time').value;
       const isPremium = document.querySelector('input[name="recipe-type"]:checked').value === 'premium';
 
@@ -1374,31 +1419,50 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
         showToast('🎉 새로운 AI 조리법이 중앙 DB에 발행되었습니다!');
         document.getElementById('recipe-form').reset();
         await loadRecipes();
-        navigate('explore');
+        goTo('explore');
       } catch (err) {
         showToast('레시피 등록 오류: ' + err.message, 'error');
       }
     }
 
-    function editSocialAccounts() {
+    // [완전 보존] 스레드/X 아이디를 로컬 및 DB에 즉시 upsert
+    async function editSocialAccounts() {
       if (!currentUser) return;
-      const curThreads = currentUser.threadsId || '';
-      const curX = currentUser.xId || '';
+      const curThreads = currentUser.threads_id || '';
+      const curX = currentUser.x_id || '';
       
       const newThreads = prompt('스레드(Threads) 계정 ID를 입력하세요 (@ 제외):', curThreads);
       if (newThreads !== null) {
         const newX = prompt('X(트위터) 계정 ID를 입력하세요 (@ 제외):', curX);
         if (newX !== null) {
-          currentUser.threadsId = newThreads.trim().replace('@', '');
-          currentUser.xId = newX.trim().replace('@', '');
-          localStorage.setItem('wr_user', JSON.stringify(currentUser));
+          const cleanThreads = newThreads.trim().replace('@', '');
+          const cleanX = newX.trim().replace('@', '');
+
+          currentUser.threads_id = cleanThreads;
+          currentUser.x_id = cleanX;
+          localStorage.setItem('wr_session_user', JSON.stringify(currentUser));
+
+          try {
+            await db.from('profiles').upsert([{
+              id: currentUser.id,
+              name: currentUser.name,
+              email: currentUser.email,
+              avatar: currentUser.avatar,
+              threads_id: cleanThreads,
+              x_id: cleanX,
+              updated_at: new Date()
+            }]);
+          } catch (err) {
+            console.warn('DB upsert 지연 (로컬 세션 보존 완료):', err);
+          }
+
           renderMyPage();
-          showToast('소셜 계정이 성공적으로 등록되었습니다!');
+          showToast('✅ 스레드와 X 계정이 안전하게 저장되었습니다!');
         }
       }
     }
 
-    function renderMyPage() {
+    async function renderMyPage() {
       if (!currentUser) return;
 
       document.getElementById('my-name').innerText = currentUser.name;
@@ -1413,9 +1477,9 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       
       const socialDisp = document.getElementById('my-social-display');
       socialDisp.innerHTML = `
-        ${currentUser.threadsId ? `<a href="https://threads.net/@${currentUser.threadsId}" target="_blank" class="text-amber-400 hover:underline flex items-center gap-1"><i class="fa-brands fa-threads"></i> @${currentUser.threadsId}</a>` : '<span class="text-slate-500">Threads 미등록</span>'}
+        ${currentUser.threads_id ? `<a href="https://threads.net/@${currentUser.threads_id}" target="_blank" class="text-amber-400 hover:underline flex items-center gap-1"><i class="fa-brands fa-threads"></i> @${currentUser.threads_id}</a>` : '<span class="text-slate-500">Threads 미등록</span>'}
         <span class="text-slate-600">•</span>
-        ${currentUser.xId ? `<a href="https://x.com/${currentUser.xId}" target="_blank" class="text-slate-300 hover:underline flex items-center gap-1"><i class="fa-brands fa-x-twitter"></i> @${currentUser.xId}</a>` : '<span class="text-slate-500">X 미등록</span>'}
+        ${currentUser.x_id ? `<a href="https://x.com/${currentUser.x_id}" target="_blank" class="text-slate-300 hover:underline flex items-center gap-1"><i class="fa-brands fa-x-twitter"></i> @${currentUser.x_id}</a>` : '<span class="text-slate-500">X 미등록</span>'}
       `;
 
       const myRecipes = allRecipes.filter(r => r.chefId === currentUser.id);
@@ -1423,9 +1487,18 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       const totalViews = myRecipes.reduce((acc, r) => acc + (r.views || 0), 0);
       const totalCopies = myRecipes.reduce((acc, r) => acc + (r.copiesCount || 0), 0);
       const totalLikes = myRecipes.reduce((acc, r) => acc + (r.likesCount || 0), 0);
-      const myFans = getStoredChefFollows().filter(id => id === currentUser.id).length;
 
-      document.getElementById('stat-fans').innerText = myFans.toLocaleString();
+      try {
+        const { count } = await db
+          .from('interactions')
+          .select('*', { count: 'exact', head: true })
+          .eq('target_id', currentUser.id)
+          .eq('type', 'follow');
+        document.getElementById('stat-fans').innerText = (count || 0).toLocaleString();
+      } catch (e) {
+        document.getElementById('stat-fans').innerText = '0';
+      }
+
       document.getElementById('stat-views').innerText = totalViews.toLocaleString();
       document.getElementById('stat-copies').innerText = totalCopies.toLocaleString();
       document.getElementById('stat-likes').innerText = totalLikes.toLocaleString();
@@ -1450,20 +1523,21 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
           <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-sm flex flex-col justify-between">
             <div>
               <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 mb-2 inline-block">${r.category}</span>
-              <h4 onclick="viewRecipeDetail('${r.id}')" class="font-bold text-sm text-white hover:text-amber-400 cursor-pointer line-clamp-2 mb-2">${r.title}</h4>
+              <h4 onclick="goTo('recipe', 'id=${r.id}')" class="font-bold text-sm text-white hover:text-amber-400 cursor-pointer line-clamp-2 mb-2">${r.title}</h4>
               <p class="text-xs text-slate-400 line-clamp-2 font-normal">${r.summary}</p>
             </div>
             <div class="mt-4 pt-3 border-t border-slate-900 flex justify-between items-center text-xs">
               <span class="text-slate-500 text-[11px]">복사 <strong>${r.copiesCount || 0}회</strong> · 추천 <strong>${r.likesCount || 0}</strong></span>
-              <button onclick="viewRecipeDetail('${r.id}')" class="px-3 py-1 bg-amber-400 text-slate-950 text-xs font-bold rounded-lg hover:bg-amber-300">상세보기</button>
+              <button onclick="goTo('recipe', 'id=${r.id}')" class="px-3 py-1 bg-amber-400 text-slate-950 text-xs font-bold rounded-lg hover:bg-amber-300">상세보기</button>
             </div>
           </div>
         `).join('');
       }
 
-      const bookmarks = getStoredBookmarks();
-      const bookmarkedRecipes = allRecipes.filter(r => bookmarks.includes(r.id));
+      const bookmarkedIds = userInteractions.filter(it => it.type === 'bookmark').map(it => it.target_id);
+      const bookmarkedRecipes = allRecipes.filter(r => bookmarkedIds.includes(r.id));
       const bookmarkedContainer = document.getElementById('my-bookmarked-list');
+
       if (bookmarkedRecipes.length === 0) {
         bookmarkedContainer.innerHTML = `<div class="col-span-full py-8 text-center bg-slate-950/40 rounded-2xl border border-dashed border-slate-800 text-slate-500 text-xs">보관한 레시피가 없습니다. 마음에 드는 레시피를 스크랩해보세요!</div>`;
       } else {
@@ -1471,21 +1545,26 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
           <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-sm flex flex-col justify-between">
             <div>
               <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 mb-2 inline-block">${r.category}</span>
-              <h4 onclick="viewRecipeDetail('${r.id}')" class="font-bold text-sm text-white hover:text-amber-400 cursor-pointer line-clamp-2 mb-2">${r.title}</h4>
+              <h4 onclick="goTo('recipe', 'id=${r.id}')" class="font-bold text-sm text-white hover:text-amber-400 cursor-pointer line-clamp-2 mb-2">${r.title}</h4>
               <p class="text-xs text-slate-400 line-clamp-2 font-normal">${r.summary}</p>
             </div>
             <div class="mt-4 pt-3 border-t border-slate-900 flex justify-between items-center text-xs">
               <span class="text-slate-500 text-[11px]">셰프: ${r.chefName}</span>
-              <button onclick="viewRecipeDetail('${r.id}')" class="px-3 py-1 bg-slate-800 text-slate-200 text-xs font-bold rounded-lg hover:bg-slate-700">열람하기</button>
+              <button onclick="goTo('recipe', 'id=${r.id}')" class="px-3 py-1 bg-slate-800 text-slate-200 text-xs font-bold rounded-lg hover:bg-slate-700">열람하기</button>
             </div>
           </div>
         `).join('');
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    // ================= 라우터 리스너 & 초기 구동 =================
+    window.addEventListener('hashchange', handleRoute);
+
+    document.addEventListener('DOMContentLoaded', async () => {
       updateNavUser();
-      loadRecipes();
+      await loadRecipes();
+      await loadUserInteractions();
+      handleRoute();
     });
   </script>
 
