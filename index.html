@@ -19,33 +19,42 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-amber-100 selection:text-amber-900">
+<body class="bg-slate-50/50 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-amber-100 selection:text-amber-900">
 
-  <!-- ======================= 1. 상단 네비게이션 ======================= -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+  <!-- ======================= 1. 상단 글로벌 네비게이션 ======================= -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <!-- 로고 -->
-      <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('explore')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
+      <!-- 브랜드 로고 -->
+      <div class="flex items-center gap-3 cursor-pointer group" onclick="navigate('explore')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-600 flex items-center justify-center text-white shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform duration-200">
           <i class="fa-solid fa-utensils text-lg"></i>
         </div>
         <div>
-          <span class="text-xl font-black tracking-tight text-slate-900">AI워크레시피</span>
-          <span class="text-[10px] text-emerald-700 font-bold ml-1.5 px-2 py-0.5 bg-emerald-50 rounded-full border border-emerald-200">OPEN COMMUNITY</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-xl font-black tracking-tight text-slate-950">AI워크레시피</span>
+            <span class="text-[10px] text-amber-700 font-extrabold px-2 py-0.5 bg-amber-50 rounded-full border border-amber-200/80 uppercase">BETA</span>
+          </div>
+          <p class="text-[10px] text-slate-400 font-medium tracking-tight -mt-0.5">일 잘하는 사람의 실무 프롬프트 아카이브</p>
         </div>
       </div>
 
-      <!-- 네비게이션 탭 -->
+      <!-- 메인 네비게이션 메뉴 -->
       <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-        <button onclick="navigate('explore')" class="hover:text-amber-600 transition-colors py-1">레시피 둘러보기</button>
+        <button onclick="navigate('explore')" class="hover:text-amber-600 transition-colors py-1 flex items-center gap-1.5">
+          <i class="fa-solid fa-compass text-xs text-slate-400"></i>
+          <span>레시피 둘러보기</span>
+        </button>
         <button onclick="navigate('creator-studio')" class="hover:text-amber-600 transition-colors py-1 flex items-center gap-1.5">
-          <i class="fa-solid fa-pen-nib text-amber-500 text-xs"></i>
+          <i class="fa-solid fa-feather-pointed text-xs text-amber-500"></i>
           <span>레시피 공유하기</span>
         </button>
-        <button onclick="navigate('mypage')" class="hover:text-amber-600 transition-colors py-1">내 셰프 스튜디오</button>
+        <button onclick="navigate('mypage')" class="hover:text-amber-600 transition-colors py-1 flex items-center gap-1.5">
+          <i class="fa-solid fa-user-astronaut text-xs text-slate-400"></i>
+          <span>내 셰프 스튜디오</span>
+        </button>
       </nav>
 
-      <!-- 우측 유저 액션 -->
+      <!-- 우측 유저 프로필 / 로그인 버튼 -->
       <div class="flex items-center gap-3" id="nav-user-area"></div>
     </div>
   </header>
@@ -54,62 +63,65 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- [VIEW 1] 메인 둘러보기 & 피드 (Explore) -->
-    <div id="view-explore" class="space-y-8">
+    <div id="view-explore" class="space-y-10">
       
-      <!-- 히어로 배너 -->
-      <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden border border-slate-800">
-        <div class="max-w-2xl relative z-10">
-          <div class="inline-flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-wider px-3 py-1 bg-amber-400/10 rounded-full border border-amber-400/20 mb-4">
+      <!-- 히어로 배너 (전문 SaaS 스타일) -->
+      <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 rounded-3xl p-8 sm:p-14 text-white shadow-2xl relative overflow-hidden border border-slate-800/80">
+        <div class="max-w-2xl relative z-10 space-y-5">
+          <div class="inline-flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-wider px-3.5 py-1.5 bg-amber-400/10 rounded-full border border-amber-400/20 shadow-inner">
             <i class="fa-brands fa-threads"></i>
-            <span>실무 검증 AI 작업 프롬프트 무료 공개</span>
+            <span>검증된 실무 프롬프트 100% 무료 개방</span>
           </div>
-          <h1 class="text-3xl sm:text-5xl font-black leading-tight mb-4 tracking-tight">
-            일 잘하는 사람의 모니터 속 <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">AI 실무 조리법</span>을 복사하세요.
+          <h1 class="text-3xl sm:text-5xl font-black leading-[1.15] tracking-tight">
+            일 잘하는 사람의 모니터 속 <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400">실전 AI 조리법</span>을 복사하세요.
           </h1>
-          <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 font-normal">
-            문서 분석, 외주 견적 검토, 계약 리스크 필터링 등 현업에서 직접 검증된 고효율 프롬프트를 1초 만에 복사해 사용하세요. 누구나 무료로 열람 가능합니다.
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-xl">
+            수백 장 사양서 분해, 복수 외주 견적서 리스크 필터링, 대용량 Q&A 회신문 작성 등 현업에서 토큰과 시간을 아껴주는 고효율 프롬프트를 1초 만에 복사해 사용하세요.
           </p>
-          <div class="flex flex-wrap items-center gap-4">
-            <button onclick="navigate('creator-studio')" class="px-6 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-500/25 transition-all text-sm inline-flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button onclick="navigate('creator-studio')" class="px-6 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all text-sm inline-flex items-center gap-2">
               <i class="fa-solid fa-plus"></i>
-              <span>내 실무 프롬프트 공유하고 인지도 쌓기</span>
+              <span>내 실무 프롬프트 공유하기</span>
             </button>
-            <a href="#recipe-list-section" class="px-5 py-3.5 bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 font-semibold rounded-xl text-sm border border-slate-700 transition-all inline-flex items-center gap-2">
+            <a href="#recipe-list-section" class="px-5 py-3.5 bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 font-semibold rounded-xl text-sm border border-slate-700 transition-all inline-flex items-center gap-2">
               <i class="fa-solid fa-arrow-down text-xs"></i>
-              <span>실전 레시피 탐색</span>
+              <span>추천 레시피 보기</span>
             </a>
           </div>
         </div>
-        <div class="absolute -right-16 -bottom-16 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <!-- 은은한 배경 글로우 -->
+        <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute right-1/4 -top-20 w-72 h-72 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
       </div>
 
-      <!-- 검색 및 카테고리 필터 섹션 -->
+      <!-- 검색창 및 카테고리 필터 섹션 -->
       <div id="recipe-list-section" class="space-y-4 pt-2">
-        <div class="flex flex-col sm:flex-row gap-4 items-center justify-between border-b border-slate-200 pb-4">
-          <!-- 카테고리 탭 -->
-          <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-            <button onclick="filterCategory('전체')" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-slate-900 text-white filter-btn transition-all shadow-sm" data-cat="전체">전체</button>
-            <button onclick="filterCategory('문서분석/기획')" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 filter-btn transition-all" data-cat="문서분석/기획">📄 문서분석/기획</button>
-            <button onclick="filterCategory('계약/구매/외주')" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 filter-btn transition-all" data-cat="계약/구매/외주">⚖️ 계약/구매/외주</button>
-            <button onclick="filterCategory('업무자동화')" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 filter-btn transition-all" data-cat="업무자동화">⚡ 업무자동화</button>
-            <button onclick="filterCategory('마케팅/영업')" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 filter-btn transition-all" data-cat="마케팅/영업">📢 마케팅/영업</button>
+        <div class="flex flex-col lg:flex-row gap-4 items-center justify-between border-b border-slate-200/80 pb-5">
+          <!-- 카테고리 탭 버튼 -->
+          <div class="flex flex-wrap gap-2 w-full lg:w-auto">
+            <button onclick="filterCategory('전체')" class="px-4 py-2 text-xs font-bold rounded-xl bg-slate-950 text-white filter-btn transition-all shadow-sm" data-cat="전체">전체</button>
+            <button onclick="filterCategory('문서분석/기획')" class="px-4 py-2 text-xs font-bold rounded-xl bg-white text-slate-600 hover:bg-slate-100/80 border border-slate-200 filter-btn transition-all" data-cat="문서분석/기획">📄 문서분석/기획</button>
+            <button onclick="filterCategory('계약/구매/외주')" class="px-4 py-2 text-xs font-bold rounded-xl bg-white text-slate-600 hover:bg-slate-100/80 border border-slate-200 filter-btn transition-all" data-cat="계약/구매/외주">⚖️ 계약/구매/외주</button>
+            <button onclick="filterCategory('업무자동화')" class="px-4 py-2 text-xs font-bold rounded-xl bg-white text-slate-600 hover:bg-slate-100/80 border border-slate-200 filter-btn transition-all" data-cat="업무자동화">⚡ 업무자동화</button>
+            <button onclick="filterCategory('마케팅/영업')" class="px-4 py-2 text-xs font-bold rounded-xl bg-white text-slate-600 hover:bg-slate-100/80 border border-slate-200 filter-btn transition-all" data-cat="마케팅/영업">📢 마케팅/영업</button>
           </div>
 
-          <!-- 검색창 -->
-          <div class="relative w-full sm:w-72">
+          <!-- 실시간 검색 입력창 -->
+          <div class="relative w-full lg:w-80">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-            <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="프롬프트, 도구, 셰프 검색..." class="w-full pl-9 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all">
+            <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="프롬프트, 도구, 키워드 실시간 검색..." class="w-full pl-9 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm transition-all">
           </div>
         </div>
       </div>
 
-      <!-- 레시피 카드 그리드 -->
+      <!-- 레시피 카드 그리드 리스트 -->
       <div id="recipe-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
 
     <!-- [VIEW 2] 레시피 상세 (Detail) & 원클릭 복사 & 후기 -->
     <div id="view-detail" class="hidden space-y-6">
-      <button onclick="navigate('explore')" class="text-xs font-bold text-slate-500 hover:text-slate-900 inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg shadow-sm transition-all">
+      <button onclick="navigate('explore')" class="text-xs font-bold text-slate-500 hover:text-slate-900 inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg shadow-sm hover:shadow transition-all">
         <i class="fa-solid fa-arrow-left"></i> 목록으로 돌아가기
       </button>
 
@@ -118,10 +130,10 @@
 
     <!-- [VIEW 3] 레시피 공유 스튜디오 (Creator Studio) -->
     <div id="view-creator-studio" class="hidden max-w-3xl mx-auto space-y-6">
-      <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+      <div class="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
         <div class="flex items-center justify-between pb-6 border-b border-slate-100 mb-6">
           <div>
-            <h2 class="text-2xl font-black text-slate-900">👨🍳 실무 AI 레시피 무료 공유</h2>
+            <h2 class="text-2xl font-black text-slate-900">👨🍳 실무 AI 레시피 공유</h2>
             <p class="text-xs text-slate-500 mt-1">내가 평소 업무에 써먹는 검증된 프롬프트를 등록하면 모든 사용자에게 실시간 공유됩니다.</p>
           </div>
           <span class="text-xs font-bold px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full">창작자 스튜디오</span>
@@ -346,6 +358,7 @@
     const SUPABASE_KEY = 'sb_publishable_YXW3NYpOPVPtytDwsftVjg_4c-v8jrC';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // [0건 시작 기본 레시피]
     const DEFAULT_RECIPES = [
       {
         id: 'recipe-ingest-doc',
@@ -472,62 +485,88 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
     let currentCategory = '전체';
     let searchQuery = '';
 
-    // [핵심 버그 완벽 해결] 배열 구조분해를 통해 JWT Payload를 100% 안전하게 디코딩
+    // [최신 웹 표준 TextDecoder 기반 무결점 JWT 디코더]
     function parseJwt(token) {
       try {
-        const parts = token.split('.');
-        const payloadBase64Url = parts.length > 1 ? parts : '';
-        if (!payloadBase64Url) return null;
+        if (!token || typeof token !== 'string') return null;
+        const firstDot = token.indexOf('.');
+        const lastDot = token.lastIndexOf('.');
+        if (firstDot === -1 || lastDot === -1 || firstDot === lastDot) return null;
 
-        let base64 = payloadBase64Url.replace(/-/g, '+').replace(/_/g, '/');
+        let base64 = token.substring(firstDot + 1, lastDot).replace(/-/g, '+').replace(/_/g, '/');
         const pad = base64.length % 4;
         if (pad) {
           base64 += '='.repeat(4 - pad);
         }
-        
-        const decodedStr = atob(base64);
-        const jsonPayload = decodeURIComponent(
-          Array.prototype.map.call(decodedStr, function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-          }).join('')
-        );
-        return JSON.parse(jsonPayload);
+
+        const binaryStr = atob(base64);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) {
+          bytes[i] = binaryStr.charCodeAt(i);
+        }
+        const decodedJson = new TextDecoder('utf-8').decode(bytes);
+        return JSON.parse(decodedJson);
       } catch (e) {
         console.error('JWT 디코딩 에러:', e);
         return null;
       }
     }
 
-    function handleGoogleCredentialResponse(response) {
-      try {
-        const profile = parseJwt(response.credential);
-        if (!profile) {
-          alert('Google 프로필 정보를 가져오는 데 실패했습니다.');
-          return;
-        }
-
-        const existingUser = JSON.parse(localStorage.getItem('wr_user') || 'null');
-        currentUser = {
-          id: profile.sub,
-          name: profile.name || 'Boateng Park',
-          email: profile.email || 'a8wlhg924@gmail.com',
-          avatar: profile.picture || '',
-          threadsId: (existingUser && existingUser.id === profile.sub) ? existingUser.threadsId : 'longmanmacrolenz',
-          tier: (existingUser && existingUser.id === profile.sub) ? existingUser.tier : '루키 셰프'
-        };
-        
-        localStorage.setItem('wr_user', JSON.stringify(currentUser));
-        closeLoginModal();
-        updateNavUser();
-        renderRecipeCards();
-        if (!document.getElementById('view-mypage').classList.contains('hidden')) {
-          renderMyPage();
-        }
-        alert(`🎉 ${currentUser.name}님, 정상적으로 로그인되었습니다!`);
-      } catch (e) {
-        console.error('Google 인증 오류:', e);
-        alert('로그인 처리 중 오류가 발생했습니다: ' + e.message);
+    // [모던 토스트 알림 함수]
+    function showToast(message, type = 'success') {
+      let toastContainer = document.getElementById('toast-container');
+      if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.className = 'fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none';
+        document.body.appendChild(toastContainer);
       }
+
+      const toast = document.createElement('div');
+      const icon = type === 'success' 
+        ? '<i class="fa-solid fa-circle-check text-emerald-400"></i>' 
+        : '<i class="fa-solid fa-circle-info text-amber-400"></i>';
+
+      toast.className = 'pointer-events-auto flex items-center gap-2.5 bg-slate-900/95 backdrop-blur-md text-white px-5 py-3 rounded-2xl shadow-xl border border-slate-700/80 text-xs font-bold transition-all duration-300 transform translate-y-2 opacity-0';
+      toast.innerHTML = `${icon}<span>${message}</span>`;
+      toastContainer.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 2400);
+    }
+
+    // Google 로그인 핸들러
+    function handleGoogleCredentialResponse(response) {
+      const profile = parseJwt(response.credential);
+      if (!profile) {
+        showToast('Google 인증 프로필 정보를 확인하지 못했습니다.', 'error');
+        return;
+      }
+
+      const existingUser = JSON.parse(localStorage.getItem('wr_user') || 'null');
+      currentUser = {
+        id: profile.sub,
+        name: profile.name || 'Boateng Park',
+        email: profile.email || 'a8wlhg924@gmail.com',
+        avatar: profile.picture || '',
+        threadsId: (existingUser && existingUser.id === profile.sub) ? existingUser.threadsId : 'longmanmacrolenz',
+        tier: (existingUser && existingUser.id === profile.sub) ? existingUser.tier : '루키 셰프'
+      };
+      
+      localStorage.setItem('wr_user', JSON.stringify(currentUser));
+      closeLoginModal();
+      updateNavUser();
+      renderRecipeCards();
+      if (!document.getElementById('view-mypage').classList.contains('hidden')) {
+        renderMyPage();
+      }
+      showToast(`🎉 ${currentUser.name}님, 로그인되었습니다!`);
     }
 
     async function loadRecipes() {
@@ -608,20 +647,20 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
         const firstChar = currentUser.name ? currentUser.name.charAt(0) : 'U';
         area.innerHTML = `
           <div class="flex items-center gap-3">
-            <button onclick="navigate('mypage')" class="flex items-center gap-2 py-1.5 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
+            <button onclick="navigate('mypage')" class="flex items-center gap-2 py-1.5 px-3 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition-all border border-slate-200/60 shadow-sm">
               <div class="w-6 h-6 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-[10px]">
                 ${currentUser.avatar ? `<img src="${currentUser.avatar}" class="w-full h-full object-cover">` : firstChar}
               </div>
               <span class="text-xs font-bold text-slate-800">${currentUser.name}</span>
             </button>
-            <button onclick="logout()" class="text-xs font-medium text-slate-400 hover:text-slate-600">
+            <button onclick="logout()" class="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
               로그아웃
             </button>
           </div>
         `;
       } else {
         area.innerHTML = `
-          <button onclick="openLoginModal()" class="px-4 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl shadow-sm transition-all flex items-center gap-2">
+          <button onclick="openLoginModal()" class="px-4 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl shadow-sm hover:shadow transition-all flex items-center gap-2">
             <i class="fa-brands fa-google text-xs"></i>
             <span>Google 로그인</span>
           </button>
@@ -644,15 +683,16 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       localStorage.removeItem('wr_user');
       updateNavUser();
       navigate('explore');
+      showToast('로그아웃되었습니다.', 'info');
     }
 
     function filterCategory(cat) {
       currentCategory = cat;
       document.querySelectorAll('.filter-btn').forEach(btn => {
         if (btn.dataset.cat === cat) {
-          btn.className = 'px-3.5 py-2 text-xs font-bold rounded-xl bg-slate-900 text-white filter-btn transition-all shadow-sm';
+          btn.className = 'px-4 py-2 text-xs font-bold rounded-xl bg-slate-950 text-white filter-btn transition-all shadow-sm';
         } else {
-          btn.className = 'px-3.5 py-2 text-xs font-bold rounded-xl bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 filter-btn transition-all';
+          btn.className = 'px-4 py-2 text-xs font-bold rounded-xl bg-white text-slate-600 hover:bg-slate-100/80 border border-slate-200 filter-btn transition-all';
         }
       });
       renderRecipeCards();
@@ -682,9 +722,10 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
 
       if (filtered.length === 0) {
         list.innerHTML = `
-          <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-slate-200 text-slate-400">
+          <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-dashed border-slate-200 text-slate-400">
             <i class="fa-solid fa-magnifying-glass text-2xl mb-3 text-slate-300"></i>
-            <p class="text-sm font-semibold">검색 조건에 맞는 레시피가 없습니다.</p>
+            <p class="text-sm font-semibold text-slate-600">검색 조건에 맞는 레시피가 없습니다.</p>
+            <p class="text-xs text-slate-400 mt-1">상단 [레시피 공유하기]를 눌러 첫 번째 레시피를 등록해보세요!</p>
           </div>
         `;
         return;
@@ -695,24 +736,25 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
         const firstChar = recipe.chefName ? recipe.chefName.charAt(0) : 'W';
 
         return `
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col justify-between group">
+          <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6 flex flex-col justify-between group">
             <div>
-              <div class="flex items-center justify-between mb-3.5">
+              <!-- 셰프 헤더 & 카테고리 -->
+              <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2.5 cursor-pointer" onclick="viewRecipeDetail('${recipe.id}')">
-                  <div class="w-8 h-8 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
+                  <div class="w-9 h-9 rounded-xl overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                     ${recipe.chefAvatar && recipe.chefAvatar.startsWith('http') ? `<img src="${recipe.chefAvatar}" class="w-full h-full object-cover">` : (recipe.chefAvatar || firstChar)}
                   </div>
                   <div>
-                    <div class="text-xs font-bold text-slate-900 flex items-center gap-1">
+                    <div class="text-xs font-bold text-slate-900 flex items-center gap-1 group-hover:text-amber-600 transition-colors">
                       <span>${recipe.chefName}</span>
                       ${recipe.threadsId ? `<i class="fa-brands fa-threads text-[10px] text-slate-400"></i>` : ''}
                     </div>
-                    <div class="text-[10px] text-slate-400">${recipe.chefTitle || '공식 셰프'}</div>
+                    <div class="text-[10px] text-slate-400 font-medium">${recipe.chefTitle || '공식 셰프'}</div>
                   </div>
                 </div>
 
                 <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                  <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/50">
                     ${recipe.category}
                   </span>
                   <button onclick="toggleBookmark('${recipe.id}')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors flex items-center justify-center">
@@ -721,30 +763,40 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
                 </div>
               </div>
 
-              <h3 onclick="viewRecipeDetail('${recipe.id}')" class="text-base font-bold text-slate-900 leading-snug mb-2 hover:text-amber-600 cursor-pointer transition-colors line-clamp-2">
+              <!-- 레시피 제목 -->
+              <h3 onclick="viewRecipeDetail('${recipe.id}')" class="text-base font-extrabold text-slate-950 leading-snug mb-2 hover:text-amber-600 cursor-pointer transition-colors line-clamp-2">
                 ${recipe.title}
               </h3>
               
-              <p class="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed">
+              <!-- 설명 -->
+              <p class="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed font-normal">
                 ${recipe.summary}
               </p>
 
+              <!-- 사용 도구 태그 -->
               <div class="flex flex-wrap gap-1.5 mb-5">
-                ${recipe.tools.map(t => `<span class="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 font-medium border border-amber-200/60">${t}</span>`).join('')}
+                ${recipe.tools.map(t => `<span class="text-[10px] px-2 py-0.5 rounded-md bg-amber-50/80 text-amber-800 font-medium border border-amber-200/50">${t}</span>`).join('')}
               </div>
             </div>
 
-            <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs">
+            <!-- 하단 바: 수치 & 액션 버튼 -->
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
               <div class="flex items-center gap-3 text-slate-400 text-[11px]">
                 <span title="조회수"><i class="fa-regular fa-eye mr-1"></i>${recipe.views || 0}</span>
-                <span title="복사 횟수" class="text-emerald-700 font-semibold"><i class="fa-regular fa-copy mr-1 text-emerald-600"></i>${recipe.copiesCount || 0}</span>
-                <span title="추천 수" class="text-rose-600 font-semibold"><i class="fa-solid fa-heart mr-1"></i>${recipe.likesCount || 0}</span>
+                <span title="복사수" class="text-emerald-700 font-semibold"><i class="fa-regular fa-copy mr-1 text-emerald-600"></i>${recipe.copiesCount || 0}</span>
+                <span title="추천수" class="text-rose-600 font-semibold"><i class="fa-solid fa-heart mr-1"></i>${recipe.likesCount || 0}</span>
               </div>
 
-              <button onclick="viewRecipeDetail('${recipe.id}')" class="px-3 py-1.5 bg-slate-900 hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5">
-                <span>조리법 보기</span>
-                <i class="fa-solid fa-arrow-right text-[10px]"></i>
-              </button>
+              <div class="flex items-center gap-1.5">
+                <button onclick="copyRecipePrompt('${recipe.id}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors flex items-center gap-1" title="즉시 복사">
+                  <i class="fa-regular fa-copy text-[11px]"></i>
+                  <span>복사</span>
+                </button>
+                <button onclick="viewRecipeDetail('${recipe.id}')" class="px-3 py-1.5 bg-slate-900 hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1">
+                  <span>열람</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -755,6 +807,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       const recipe = allRecipes.find(r => r.id === recipeId);
       if (!recipe) return;
 
+      // 실제 방문 시에만 조회수 +1
       recipe.views = (recipe.views || 0) + 1;
       db.from('recipes').update({ views: recipe.views }).eq('id', recipe.id).then();
 
@@ -781,21 +834,21 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
                 ${recipe.saveTime ? `<span class="text-xs font-semibold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded border border-emerald-200">⏳ ${recipe.saveTime}</span>` : ''}
               </div>
               <div class="flex items-center gap-2">
-                <button onclick="toggleBookmark('${recipe.id}')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
+                <button onclick="toggleBookmark('${recipe.id}')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center gap-1.5 transition-colors">
                   <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark ${isBookmarked ? 'text-indigo-600' : 'text-slate-400'}"></i>
                   <span>${isBookmarked ? '보관됨' : '스크랩'}</span>
                 </button>
-                <button onclick="toggleLike('${recipe.id}')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border ${isLiked ? 'border-rose-200 bg-rose-50 text-rose-600' : 'border-slate-200 hover:bg-slate-50 text-slate-700'} flex items-center gap-1.5">
+                <button onclick="toggleLike('${recipe.id}')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border ${isLiked ? 'border-rose-200 bg-rose-50 text-rose-600' : 'border-slate-200 hover:bg-slate-50 text-slate-700'} flex items-center gap-1.5 transition-colors">
                   <i class="fa-solid fa-heart ${isLiked ? 'text-rose-500' : 'text-slate-400'}"></i>
                   <span>추천 ${recipe.likesCount || 0}</span>
                 </button>
               </div>
             </div>
 
-            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight mb-4">${recipe.title}</h1>
-            <p class="text-slate-600 text-sm leading-relaxed mb-6">${recipe.summary}</p>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-950 leading-tight mb-4">${recipe.title}</h1>
+            <p class="text-slate-600 text-sm leading-relaxed mb-6 font-normal">${recipe.summary}</p>
 
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">사용한 AI 도구 스택</h3>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">필수 활용 AI 도구</h3>
             <div class="flex flex-wrap gap-2 mb-8">
               ${recipe.tools.map(t => `<span class="px-3 py-1 bg-slate-100 text-slate-800 text-xs font-semibold rounded-lg border border-slate-200">${t}</span>`).join('')}
             </div>
@@ -806,7 +859,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
                   <i class="fa-solid fa-code text-amber-500"></i>
                   <span>조리법 (프롬프트 원문 및 세팅값)</span>
                 </h3>
-                <button onclick="copyRecipePrompt('${recipe.id}')" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl text-xs shadow-md shadow-orange-500/20 transition-all flex items-center gap-1.5">
+                <button onclick="copyRecipePrompt('${recipe.id}')" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl text-xs shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 transition-all flex items-center gap-1.5">
                   <i class="fa-solid fa-copy"></i>
                   <span>프롬프트 원클릭 복사</span>
                 </button>
@@ -851,7 +904,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
                 <input type="text" id="review-time-saved" placeholder="절약된 시간 (예: 1시간 단축)" class="p-2.5 text-xs bg-white border rounded-xl border-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500">
                 <input type="text" id="review-comment" required placeholder="솔직한 실무 적용 후기나 팁을 남겨주세요." class="sm:col-span-2 p-2.5 text-xs bg-white border rounded-xl border-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500">
               </div>
-              <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition-all">
+              <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition-all shadow-sm">
                 후기 등록하고 셰프 응원하기
               </button>
             </form>
@@ -881,7 +934,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
 
         </div>
 
-        <!-- 우측 셰프 정보 -->
+        <!-- 우측 셰프 정보 & 공유 위젯 -->
         <div class="space-y-6">
           <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
             <div class="flex items-center gap-3.5 mb-4">
@@ -893,16 +946,22 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
                   <span>${recipe.chefName}</span>
                   <i class="fa-solid fa-circle-check text-amber-500 text-xs" title="인증 셰프"></i>
                 </h4>
-                <p class="text-xs text-slate-500">${recipe.chefTitle || '공식 셰프'}</p>
+                <p class="text-xs text-slate-500 font-medium">${recipe.chefTitle || '공식 셰프'}</p>
               </div>
             </div>
 
             ${recipe.threadsId ? `
-              <a href="https://threads.net/@${recipe.threadsId}" target="_blank" class="w-full mb-4 py-2.5 px-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm">
+              <a href="https://threads.net/@${recipe.threadsId}" target="_blank" class="w-full mb-3 py-2.5 px-3 bg-slate-950 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm">
                 <i class="fa-brands fa-threads text-sm"></i>
                 <span>@${recipe.threadsId} 스레드 팔로우</span>
               </a>
             ` : ''}
+
+            <!-- 스레드로 공유하기 바이럴 버튼 -->
+            <button onclick="shareToThreads('${recipe.title}')" class="w-full mb-4 py-2 px-3 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-amber-200/80 transition-all">
+              <i class="fa-solid fa-share-nodes text-xs text-amber-700"></i>
+              <span>스레드(Threads)에 이 조리법 공유</span>
+            </button>
 
             <div class="border-t border-slate-100 pt-4 space-y-2.5 text-xs">
               <div class="flex justify-between">
@@ -917,10 +976,6 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
                 <span class="text-slate-400">레시피 평균 만족도</span>
                 <strong class="text-amber-600 font-bold">${avgRating === '-' ? '-' : '★ ' + avgRating}</strong>
               </div>
-            </div>
-
-            <div class="mt-6 pt-4 border-t border-slate-100 text-center">
-              <p class="text-[11px] text-slate-400">이 프롬프트를 스레드나 SNS에 공유해 동료들의 칼퇴를 도와주세요!</p>
             </div>
           </div>
         </div>
@@ -937,9 +992,18 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
         recipe.copiesCount = (recipe.copiesCount || 0) + 1;
         db.from('recipes').update({ copies_count: recipe.copiesCount }).eq('id', recipe.id).then();
 
-        alert('📋 프롬프트 원문이 클립보드에 복사되었습니다!\nAI 채팅창에 바로 붙여넣어(Ctrl + V) 사용해보세요.');
-        viewRecipeDetail(recipeId);
+        showToast('📋 프롬프트 원문이 복사되었습니다! AI 창에 붙여넣으세요.');
+        if (!document.getElementById('view-detail').classList.contains('hidden')) {
+          viewRecipeDetail(recipeId);
+        } else {
+          renderRecipeCards();
+        }
       });
+    }
+
+    function shareToThreads(title) {
+      const text = encodeURIComponent(`[AI워크레시피] "${title}" 실무 프롬프트가 무료로 공개되어 공유합니다! 확인해보세요: https://longmanmacrolenz.github.io/WorkRecipe/`);
+      window.open(`https://threads.net/intent/post?text=${text}`, '_blank');
     }
 
     function toggleLike(recipeId) {
@@ -954,9 +1018,11 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       if (likes.includes(recipeId)) {
         likes = likes.filter(id => id !== recipeId);
         recipe.likesCount = Math.max(0, (recipe.likesCount || 1) - 1);
+        showToast('추천이 취소되었습니다.', 'info');
       } else {
         likes.push(recipeId);
         recipe.likesCount = (recipe.likesCount || 0) + 1;
+        showToast('❤️ 이 레시피를 추천했습니다!');
       }
 
       localStorage.setItem('wr_likes', JSON.stringify(likes));
@@ -972,10 +1038,10 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       let bookmarks = getStoredBookmarks();
       if (bookmarks.includes(recipeId)) {
         bookmarks = bookmarks.filter(id => id !== recipeId);
-        alert('보관함에서 제거되었습니다.');
+        showToast('보관함에서 제거되었습니다.', 'info');
       } else {
         bookmarks.push(recipeId);
-        alert('내 보관함(마이페이지)에 저장되었습니다!');
+        showToast('🔖 내 셰프 스튜디오 보관함에 저장되었습니다!');
       }
       localStorage.setItem('wr_bookmarks', JSON.stringify(bookmarks));
       renderRecipeCards();
@@ -1004,11 +1070,11 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
         }]);
         if (error) throw error;
 
-        alert('소중한 실무 후기가 등록되었습니다!');
+        showToast('소중한 실무 후기가 등록되었습니다!');
         await loadRecipes();
         viewRecipeDetail(recipeId);
       } catch (err) {
-        alert('후기 등록 중 오류가 발생했습니다: ' + err.message);
+        showToast('후기 등록 오류: ' + err.message, 'error');
       }
     }
 
@@ -1050,12 +1116,12 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
 
         if (error) throw error;
 
-        alert('🎉 새로운 AI 조리법이 중앙 DB에 성공적으로 저장되었습니다!\n모든 브라우저와 기기에서 즉시 확인하실 수 있습니다.');
+        showToast('🎉 새로운 AI 조리법이 중앙 DB에 발행되었습니다!');
         document.getElementById('recipe-form').reset();
         await loadRecipes();
         navigate('explore');
       } catch (err) {
-        alert('레시피 등록 중 오류가 발생했습니다: ' + err.message);
+        showToast('레시피 등록 오류: ' + err.message, 'error');
       }
     }
 
@@ -1067,7 +1133,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
         currentUser.threadsId = val.trim().replace('@', '');
         localStorage.setItem('wr_user', JSON.stringify(currentUser));
         renderMyPage();
-        alert('스레드 계정이 등록되었습니다!');
+        showToast('스레드 계정이 등록되었습니다!');
       }
     }
 
@@ -1117,7 +1183,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
 
       const createdContainer = document.getElementById('my-created-list');
       if (myRecipes.length === 0) {
-        createdContainer.innerHTML = `<div class="col-span-full py-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-400 text-xs">아직 공유한 레시피가 없습니다. 상단 [새 레시피 작성]을 눌러 첫 조리법을 등록해보세요!</div>`;
+        createdContainer.innerHTML = `<div class="col-span-full py-8 text-center bg-white rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">아직 공유한 레시피가 없습니다. 상단 [새 레시피 작성]을 눌러 첫 조리법을 등록해보세요!</div>`;
       } else {
         createdContainer.innerHTML = myRecipes.map(r => `
           <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
@@ -1138,7 +1204,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       const bookmarkedRecipes = allRecipes.filter(r => bookmarks.includes(r.id));
       const bookmarkedContainer = document.getElementById('my-bookmarked-list');
       if (bookmarkedRecipes.length === 0) {
-        bookmarkedContainer.innerHTML = `<div class="col-span-full py-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-400 text-xs">보관한 레시피가 없습니다. 마음에 드는 레시피를 스크랩해보세요!</div>`;
+        bookmarkedContainer.innerHTML = `<div class="col-span-full py-8 text-center bg-white rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">보관한 레시피가 없습니다. 마음에 드는 레시피를 스크랩해보세요!</div>`;
       } else {
         bookmarkedContainer.innerHTML = bookmarkedRecipes.map(r => `
           <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
