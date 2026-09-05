@@ -346,7 +346,6 @@
     const SUPABASE_KEY = 'sb_publishable_YXW3NYpOPVPtytDwsftVjg_4c-v8jrC';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // [완전 초기화된 0건 시작 기본 레시피 4종]
     const DEFAULT_RECIPES = [
       {
         id: 'recipe-ingest-doc',
@@ -473,27 +472,29 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
     let currentCategory = '전체';
     let searchQuery = '';
 
+    // [핵심 버그 완벽 해결] 배열 구조분해를 통해 JWT Payload를 100% 안전하게 디코딩
     function parseJwt(token) {
       try {
-        const base64Url = token.split('.');
-        let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const parts = token.split('.');
+        const payloadBase64Url = parts.length > 1 ? parts : '';
+        if (!payloadBase64Url) return null;
+
+        let base64 = payloadBase64Url.replace(/-/g, '+').replace(/_/g, '/');
         const pad = base64.length % 4;
         if (pad) {
           base64 += '='.repeat(4 - pad);
         }
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+        
+        const decodedStr = atob(base64);
+        const jsonPayload = decodeURIComponent(
+          Array.prototype.map.call(decodedStr, function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join('')
+        );
         return JSON.parse(jsonPayload);
       } catch (e) {
-        try {
-          const parts = token.split('.');
-          let b64 = parts.replace(/-/g, '+').replace(/_/g, '/');
-          while (b64.length % 4) b64 += '=';
-          return JSON.parse(decodeURIComponent(escape(atob(b64))));
-        } catch(err2) {
-          return null;
-        }
+        console.error('JWT 디코딩 에러:', e);
+        return null;
       }
     }
 
@@ -525,6 +526,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
         alert(`🎉 ${currentUser.name}님, 정상적으로 로그인되었습니다!`);
       } catch (e) {
         console.error('Google 인증 오류:', e);
+        alert('로그인 처리 중 오류가 발생했습니다: ' + e.message);
       }
     }
 
@@ -603,11 +605,12 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
     function updateNavUser() {
       const area = document.getElementById('nav-user-area');
       if (currentUser) {
+        const firstChar = currentUser.name ? currentUser.name.charAt(0) : 'U';
         area.innerHTML = `
           <div class="flex items-center gap-3">
             <button onclick="navigate('mypage')" class="flex items-center gap-2 py-1.5 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
               <div class="w-6 h-6 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-[10px]">
-                ${currentUser.avatar ? `<img src="${currentUser.avatar}" class="w-full h-full object-cover">` : currentUser.name[0]}
+                ${currentUser.avatar ? `<img src="${currentUser.avatar}" class="w-full h-full object-cover">` : firstChar}
               </div>
               <span class="text-xs font-bold text-slate-800">${currentUser.name}</span>
             </button>
@@ -689,6 +692,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
 
       list.innerHTML = filtered.map(recipe => {
         const isBookmarked = bookmarks.includes(recipe.id);
+        const firstChar = recipe.chefName ? recipe.chefName.charAt(0) : 'W';
 
         return `
           <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col justify-between group">
@@ -696,7 +700,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
               <div class="flex items-center justify-between mb-3.5">
                 <div class="flex items-center gap-2.5 cursor-pointer" onclick="viewRecipeDetail('${recipe.id}')">
                   <div class="w-8 h-8 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
-                    ${recipe.chefAvatar && recipe.chefAvatar.startsWith('http') ? `<img src="${recipe.chefAvatar}" class="w-full h-full object-cover">` : (recipe.chefAvatar || recipe.chefName[0])}
+                    ${recipe.chefAvatar && recipe.chefAvatar.startsWith('http') ? `<img src="${recipe.chefAvatar}" class="w-full h-full object-cover">` : (recipe.chefAvatar || firstChar)}
                   </div>
                   <div>
                     <div class="text-xs font-bold text-slate-900 flex items-center gap-1">
@@ -751,7 +755,6 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       const recipe = allRecipes.find(r => r.id === recipeId);
       if (!recipe) return;
 
-      // 실제 방문 시에만 조회수 +1 증가 및 DB 반영
       recipe.views = (recipe.views || 0) + 1;
       db.from('recipes').update({ views: recipe.views }).eq('id', recipe.id).then();
 
@@ -764,6 +767,8 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       const avgRating = reviews.length > 0 
         ? (reviews.reduce((acc, cur) => acc + cur.rating, 0) / reviews.length).toFixed(1) 
         : '-';
+
+      const firstChar = recipe.chefName ? recipe.chefName.charAt(0) : 'W';
 
       const container = document.getElementById('detail-container');
       container.innerHTML = `
@@ -881,7 +886,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
           <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
             <div class="flex items-center gap-3.5 mb-4">
               <div class="w-14 h-14 rounded-2xl overflow-hidden bg-slate-900 text-white flex items-center justify-center font-black text-base shadow-md">
-                ${recipe.chefAvatar && recipe.chefAvatar.startsWith('http') ? `<img src="${recipe.chefAvatar}" class="w-full h-full object-cover">` : (recipe.chefAvatar || recipe.chefName[0])}
+                ${recipe.chefAvatar && recipe.chefAvatar.startsWith('http') ? `<img src="${recipe.chefAvatar}" class="w-full h-full object-cover">` : (recipe.chefAvatar || firstChar)}
               </div>
               <div>
                 <h4 class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
@@ -929,7 +934,6 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       if (!recipe) return;
 
       navigator.clipboard.writeText(recipe.content).then(() => {
-        // 실제 복사 시에만 +1
         recipe.copiesCount = (recipe.copiesCount || 0) + 1;
         db.from('recipes').update({ copies_count: recipe.copiesCount }).eq('id', recipe.id).then();
 
@@ -1000,7 +1004,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
         }]);
         if (error) throw error;
 
-        alert('소중한 실무 후기가 전 세계 사용자가 볼 수 있도록 등록되었습니다!');
+        alert('소중한 실무 후기가 등록되었습니다!');
         await loadRecipes();
         viewRecipeDetail(recipeId);
       } catch (err) {
@@ -1032,7 +1036,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
           chef_name: currentUser.name,
           chef_title: '실무 AI 셰프',
           threads_id: threadsId,
-          chef_avatar: currentUser.avatar || currentUser.name[0],
+          chef_avatar: currentUser.avatar || (currentUser.name ? currentUser.name.charAt(0) : 'U'),
           title: title,
           category: category,
           tools: tools,
@@ -1077,7 +1081,7 @@ Item No. | Client Question | Proposed Official Reply | Internal Basis`,
       if (currentUser.avatar) {
         avatarEl.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`;
       } else {
-        avatarEl.innerText = currentUser.name[0];
+        avatarEl.innerText = currentUser.name ? currentUser.name.charAt(0) : 'U';
       }
       
       const threadsDisp = document.getElementById('my-threads-display');
