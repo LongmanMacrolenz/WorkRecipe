@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Threads Radio - 읽어주는 쓰레드</title>
+  <title>Threads Radio - 읽어주는 실시간 스레드</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @keyframes pulse-bar {
       0%, 100% { height: 4px; }
-      50% { height: 28px; }
+      50% { height: 26px; }
     }
     .playing .bar { animation: pulse-bar 1.2s ease-in-out infinite; }
     .bar:nth-child(2) { animation-delay: 0.15s; }
@@ -28,16 +28,17 @@
       </div>
       <div>
         <h1 class="text-base font-bold tracking-tight">Threads Radio</h1>
-        <p class="text-xs text-neutral-400">귀로 듣는 쓰레드 이야기</p>
+        <p class="text-xs text-neutral-400">내 스레드 피드 실시간 라디오</p>
       </div>
     </div>
-    <div class="flex items-center space-x-4">
+    <div class="flex items-center space-x-3">
       <div id="onAirBadge" class="hidden items-center space-x-1.5 px-3 py-1 bg-red-950/80 border border-red-600/50 rounded-full text-red-400 text-xs font-semibold animate-pulse">
         <span class="w-2 h-2 rounded-full bg-red-500"></span>
         <span>ON AIR</span>
       </div>
-      <button onclick="toggleModal(true)" class="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-1.5 rounded-lg border border-neutral-700 transition">
-        <i class="fa-solid fa-plus mr-1"></i> 쓰레드 추가
+      <button onclick="fetchMyThreads()" class="text-xs bg-neutral-800 hover:bg-neutral-700 px-3 py-1.5 rounded-lg border border-neutral-700 transition flex items-center space-x-1">
+        <i class="fa-solid fa-arrows-rotate"></i>
+        <span>새로고침</span>
       </button>
     </div>
   </header>
@@ -45,18 +46,16 @@
   <!-- Main Player Container -->
   <main class="flex-1 max-w-2xl w-full mx-auto p-6 flex flex-col justify-center">
     
-    <!-- Radio Tuner / Card Box -->
+    <!-- Radio Card Box -->
     <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-      <!-- Background Ambient Glow -->
       <div class="absolute -top-20 -right-20 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <!-- DJ Status Bar -->
       <div class="flex items-center justify-between border-b border-neutral-800/80 pb-4 mb-6">
         <div class="flex items-center space-x-2 text-xs text-amber-400 font-mono">
           <i class="fa-solid fa-microphone-lines animate-pulse"></i>
-          <span id="djStatus">DJ 대기 중...</span>
+          <span id="djStatus">스레드 데이터 수신 중...</span>
         </div>
-        <!-- Visualizer -->
         <div id="visualizer" class="flex items-end space-x-1 h-7">
           <div class="bar w-1 bg-amber-500/80 rounded-full h-1"></div>
           <div class="bar w-1 bg-amber-500/80 rounded-full h-1"></div>
@@ -73,21 +72,20 @@
             @
           </div>
           <div>
-            <div class="font-semibold text-sm text-neutral-200" id="authorName">김감성</div>
-            <div class="text-xs text-neutral-500" id="authorHandle">@sensibility_kim</div>
+            <div class="font-semibold text-sm text-neutral-200" id="authorName">스레드 유저</div>
+            <div class="text-xs text-neutral-500" id="authorHandle">@loading</div>
           </div>
-          <span class="text-xs text-neutral-600 ml-auto" id="threadTime">방금 전</span>
+          <span class="text-xs text-neutral-600 ml-auto" id="threadTime">-</span>
         </div>
 
         <p id="threadBody" class="text-neutral-300 text-lg leading-relaxed font-light transition-all">
-          재생 버튼을 누르면 쓰레드 글을 라디오 DJ처럼 편안한 목소리와 배경음악과 함께 낭독해 드립니다.
+          스레드 글을 불러오는 중입니다...
         </p>
       </div>
 
       <!-- Player Controls -->
       <div class="mt-8 pt-6 border-t border-neutral-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
         
-        <!-- Action Buttons -->
         <div class="flex items-center space-x-3">
           <button onclick="prevThread()" class="w-10 h-10 rounded-full hover:bg-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white transition">
             <i class="fa-solid fa-backward-step"></i>
@@ -102,7 +100,6 @@
           </button>
         </div>
 
-        <!-- BGM & Voice Options -->
         <div class="flex items-center space-x-4 text-xs text-neutral-400">
           <label class="flex items-center space-x-2 cursor-pointer select-none">
             <input type="checkbox" id="bgmToggle" checked onchange="toggleBgm(this.checked)" class="accent-amber-500 rounded">
@@ -125,57 +122,18 @@
     <!-- Playlist Preview -->
     <div class="mt-6">
       <div class="flex justify-between items-center mb-3 px-1">
-        <span class="text-xs uppercase tracking-wider text-neutral-500 font-semibold">오늘의 방송 사연 목록 (<span id="playlistCount">0</span>)</span>
+        <span class="text-xs uppercase tracking-wider text-neutral-500 font-semibold">불러온 방송 사연 (<span id="playlistCount">0</span>)</span>
       </div>
       <div id="playlist" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
     </div>
 
   </main>
 
-  <!-- Add Thread Modal -->
-  <div id="modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl w-full max-w-md p-6">
-      <h3 class="text-base font-bold mb-4">새 쓰레드 사연 추가</h3>
-      <div class="space-y-3">
-        <div>
-          <label class="text-xs text-neutral-400">작성자</label>
-          <input type="text" id="newAuthor" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2.5 text-sm mt-1 focus:border-amber-500 outline-none" placeholder="예: 밤하늘별">
-        </div>
-        <div>
-          <label class="text-xs text-neutral-400">내용</label>
-          <textarea id="newContent" rows="4" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-2.5 text-sm mt-1 focus:border-amber-500 outline-none" placeholder="쓰레드 본문을 입력하세요..."></textarea>
-        </div>
-      </div>
-      <div class="flex justify-end space-x-2 mt-5">
-        <button onclick="toggleModal(false)" class="px-4 py-2 text-xs rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300">취소</button>
-        <button onclick="addCustomThread()" class="px-4 py-2 text-xs rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-semibold">추가하기</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // 1. Initial Mock Threads Data
-    let threads = [
-      {
-        author: "퇴근길직장인",
-        handle: "@daily_routine",
-        time: "10분 전",
-        content: "오늘 유독 지치고 힘들었는데, 지하철에서 어떤 할머니께서 따뜻한 붕어빵을 건네주셨어요. 세상은 아직 살 만한 것 같아요."
-      },
-      {
-        author: "새벽코더",
-        handle: "@dev_night",
-        time: "25분 전",
-        content: "3시간 동안 잡고 있던 버그가 세미콜론 하나 때문이었다니. 허탈하지만 그래도 창밖의 새벽 공기가 참 상쾌하네요."
-      },
-      {
-        author: "책읽는고양이",
-        handle: "@cat_books",
-        time: "40분 전",
-        content: "남들과 비교하면서 조급해질 때마다 잠시 폰을 내려놓고 심호흡을 세 번 해보세요. 당신만의 계절은 반드시 옵니다."
-      }
-    ];
+    // 발급받으신 Threads Access Token
+    const THREADS_ACCESS_TOKEN = "THAANMYV3bhmxBYllVN1g1ZATA5TzllbFpHME0xcFdoT20ySTdibmRCeS11QWJfWXpEZAS1lSjYtQWUySTUwcjRlS2oyR1RGMnNJLTY3T3JfMG16OG9yNDhuSVJ2QnpHT2hlVUE5NE0zT1puYmhsTnNCTUo5LW0xcEc1ZAGRmODhGdm9aUXFYMmx5Rjd3Y0g4cTQZD";
 
+    let threads = [];
     let currentIndex = 0;
     let isPlaying = false;
     let synth = window.speechSynthesis;
@@ -184,16 +142,66 @@
     let bgmGainNode = null;
     let bgmInterval = null;
 
-    // DJ Openings for Radio Feel
     const djOpenings = [
-      "다음으로 들려드릴 사연입니다.",
-      "이번엔 쓰레드에서 많은 공감을 얻은 글이에요.",
-      "익명의 쓰레더님이 전해주신 따뜻한 마음입니다.",
-      "라디오 채널에 도착한 다음 이야기, 함께 나눠볼게요."
+      "스레드에 남겨주신 다음 사연입니다.",
+      "이번엔 쓰레더님의 솔직한 이야기를 읽어드릴게요.",
+      "마음을 울리는 다음 사연, 함께 들어보시죠.",
+      "라디오 채널에 도착한 소중한 글입니다."
     ];
 
-    // UI Updates
+    // 스레드 API 호출 함수
+    async function fetchMyThreads() {
+      document.getElementById('djStatus').innerText = "스레드 API 연결 중...";
+      try {
+        const response = await fetch(`https://graph.threads.net/v1.0/me/threads?fields=id,text,timestamp,username&access_token=${THREADS_ACCESS_TOKEN}`);
+        const result = await response.json();
+
+        if (result.error) {
+          throw new Error(result.error.message);
+        }
+
+        if (result.data && result.data.length > 0) {
+          // 텍스트가 있는 글만 추출
+          const validThreads = result.data.filter(t => t.text && t.text.trim().length > 0);
+
+          if (validThreads.length === 0) {
+            threads = [{
+              author: result.data[0].username || "스레드",
+              handle: `@${result.data[0].username || "user"}`,
+              time: "방금",
+              content: "등록된 텍스트 스레드가 없습니다. 스레드 앱에서 글을 작성한 후 새로고침을 눌러보세요!"
+            }];
+          } else {
+            threads = validThreads.map(post => ({
+              author: post.username,
+              handle: `@${post.username}`,
+              time: new Date(post.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+              content: post.text
+            }));
+          }
+
+          currentIndex = 0;
+          updateUI();
+          document.getElementById('djStatus').innerText = "방송 준비 완료 (재생 버튼 클릭)";
+        } else {
+          document.getElementById('djStatus').innerText = "작성된 스레드가 없습니다.";
+        }
+      } catch (err) {
+        console.error("스레드 API 오류:", err);
+        document.getElementById('djStatus').innerText = "스레드 로드 실패 (임시 데이터로 전환)";
+        // 실패 시 예비 데이터 표시
+        threads = [{
+          author: "안내",
+          handle: "@system",
+          time: "안내",
+          content: `스레드를 불러오지 못했습니다. 오류: ${err.message}`
+        }];
+        updateUI();
+      }
+    }
+
     function updateUI() {
+      if (!threads.length) return;
       const cur = threads[currentIndex];
       document.getElementById('authorName').innerText = cur.author;
       document.getElementById('authorHandle').innerText = cur.handle;
@@ -202,7 +210,6 @@
       document.getElementById('threadBody').innerText = cur.content;
       document.getElementById('playlistCount').innerText = threads.length;
 
-      // Render Playlist
       const listEl = document.getElementById('playlist');
       listEl.innerHTML = threads.map((t, idx) => `
         <div onclick="selectThread(${idx})" class="p-2.5 rounded-xl cursor-pointer text-xs flex items-center justify-between border transition ${
@@ -217,12 +224,12 @@
       `).join('');
     }
 
-    // Web Audio API Ambient Radio BGM Generator (No external audio file needed)
+    // Lo-Fi Ambient BGM (Web Audio API)
     function initBgm() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         bgmGainNode = audioCtx.createGain();
-        bgmGainNode.gain.setValueAtTime(0.08, audioCtx.currentTime); // Subtle volume
+        bgmGainNode.gain.setValueAtTime(0.06, audioCtx.currentTime);
         bgmGainNode.connect(audioCtx.destination);
       }
     }
@@ -230,10 +237,10 @@
     function playLoFiChord() {
       if (!audioCtx || !document.getElementById('bgmToggle').checked || !isPlaying) return;
       const chords = [
-        [261.63, 329.63, 392.00, 493.88], // Cmaj7
-        [220.00, 261.63, 329.63, 392.00], // Am7
-        [174.61, 220.00, 261.63, 329.63], // Fmaj7
-        [196.00, 246.94, 293.66, 349.23]  // G7
+        [261.63, 329.63, 392.00, 493.88],
+        [220.00, 261.63, 329.63, 392.00],
+        [174.61, 220.00, 261.63, 329.63],
+        [196.00, 246.94, 293.66, 349.23]
       ];
       const chord = chords[Math.floor(Math.random() * chords.length)];
       
@@ -243,7 +250,7 @@
         const filter = audioCtx.createBiquadFilter();
         
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(450, audioCtx.currentTime); // Warm vintage tone
+        filter.frequency.setValueAtTime(420, audioCtx.currentTime);
 
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
@@ -265,9 +272,7 @@
       initBgm();
       if (audioCtx.state === 'suspended') audioCtx.resume();
       playLoFiChord();
-      if (!bgmInterval) {
-        bgmInterval = setInterval(playLoFiChord, 4500);
-      }
+      if (!bgmInterval) bgmInterval = setInterval(playLoFiChord, 4500);
     }
 
     function stopBgm() {
@@ -277,9 +282,11 @@
       }
     }
 
-    // TTS & Radio Flow
+    // TTS Voice Playback
     function playCurrentThread() {
       synth.cancel();
+      if (!threads.length) return;
+      
       const current = threads[currentIndex];
       const opening = djOpenings[Math.floor(Math.random() * djOpenings.length)];
       const fullText = `${opening}. ${current.author}님의 글입니다. ... ${current.content}`;
@@ -289,7 +296,6 @@
       currentUtterance.rate = parseFloat(document.getElementById('rateSelect').value);
       currentUtterance.pitch = 1.0;
 
-      // Select better Korean voice if available
       const voices = synth.getVoices();
       const koVoice = voices.find(v => v.lang.includes('ko') || v.lang.includes('KR'));
       if (koVoice) currentUtterance.voice = koVoice;
@@ -303,19 +309,12 @@
         if (!isPlaying) return;
         document.getElementById('djStatus').innerText = "잠시 음악이 흐릅니다...";
         document.getElementById('visualizer').classList.remove('playing');
-        
-        // Intermission pause (like real radio) before the next thread
         setTimeout(() => {
-          if (isPlaying) {
-            nextThread();
-          }
+          if (isPlaying) nextThread();
         }, 2200);
       };
 
-      currentUtterance.onerror = () => {
-        setPlayingState(false);
-      };
-
+      currentUtterance.onerror = () => setPlayingState(false);
       synth.speak(currentUtterance);
     }
 
@@ -365,45 +364,10 @@
       else stopBgm();
     }
 
-    // Custom Thread Modal Handlers
-    function toggleModal(show) {
-      const modal = document.getElementById('modal');
-      if (show) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-      } else {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
-    }
-
-    function addCustomThread() {
-      const author = document.getElementById('newAuthor').value.trim() || '익명의 청취자';
-      const content = document.getElementById('newContent').value.trim();
-      if (!content) return alert('내용을 입력해 주세요.');
-
-      threads.unshift({
-        author,
-        handle: `@${author}`,
-        time: '방금 전',
-        content
-      });
-
-      document.getElementById('newAuthor').value = '';
-      document.getElementById('newContent').value = '';
-      toggleModal(false);
-      currentIndex = 0;
-      updateUI();
-      if (isPlaying) playCurrentThread();
-    }
-
-    // Voice loaded event for browsers that load voices asynchronously
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = () => { /* voices ready */ };
-    }
-
-    // Initialize
-    updateUI();
+    // 실행 시 스레드 피드 자동 조회
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchMyThreads();
+    });
   </script>
 </body>
 </html>
